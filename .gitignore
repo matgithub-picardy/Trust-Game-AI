@@ -5,7 +5,17 @@ __pycache__/
 
 *.sqlite3
 
+# Ignorer environnements virtuels
+.venv/
+venv/
+ENV/
+
+# Ignorer fichiers système macOS
+.DS_Store
+
+# Ignorer fichiers secrets éventuels
 .env
+
 node_modules/
 
 test.py
