@@ -1,5 +1,17 @@
 {% extends "global/Page.html" %} 
-{{ block title }} Bienvenue {{ endblock }}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
+{% endblock %}
+
+{% block title %}
+
+  <h1 class="page-title">Bienvenue !</h1>
+
+{% endblock %}
+
 {% block content %}
 <div class="container" style="max-width: 800px; margin: 0 auto">
   <div class="card">
@@ -11,7 +23,7 @@
 
       <p class="lead">
         Merci d'avoir accepté d'y participer. Avant de commencer, nous vous
-        invitons à lire attentivement les informations qui suivent.
+        invitons à lire attentivement les instructions qui suivent.
       </p>
 
       <p>
@@ -24,30 +36,23 @@
         <p><strong>⏳ L'expérimentation dure environ 45 min.</strong></p>
       </div>
 
-      <div class="alert alert-warning">
-        <h5>🧠 <strong>Concentration souhaitée :</strong></h5>
+      <div class="alert-box">
         <p>
-          Votre concentration est essentielle pour garantir la validité de
-          l'expérimentation et vous ne devez pas communiquer avec vos camarades
-          présents.
-        </p>
+          <strong>Votre concentration est essentielle</strong> pour garantir la validité de l'expérimentation. Vous ne devez pas communiquer avec vos camarades présents et les notifications de votre ordinateur ou de votre téléphone seront désactivées le temps de l'expérimentation. </p>
       </div>
 
       <p>
-        Vous pouvez poser des questions à tout moment à l'équipe encadrante. Les
-        notifications de votre ordinateur ou de votre téléphone portable seront
-        désactivées le temps de la session.
+        Vous pouvez poser des questions à tout moment à l'équipe encadrante. 
       </p>
 
       <p>
         Vos réponses sont <strong>anonymes</strong> et ne seront utilisées qu'à
-        des fins de recherche académique. Une seule participation autorisée par
-        personne.
+        des fins de recherche. Une seule participation est autorisé par personne.
       </p>
 
       <div class="alert alert-success">
         <p>
-          <strong>💬 Lisez bien chaque consigne avant toute décision.</strong>
+          <strong>💬 Lisez bien chaque instruction avant toute décision.</strong>
         </p>
       </div>
 

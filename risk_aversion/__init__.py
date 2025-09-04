@@ -367,15 +367,15 @@ def get_li_items_5_8(known: bool) -> list:
     if known:
         n = C.BALL_NUMBER
         result = [
-            f"Urne avec {n} {get_ball_emoji("yellow")} : vous êtes certain de tirer une boule {get_ball_emoji("yellow")}.",
-            f"Urne avec {n//2} {get_ball_emoji("yellow")} et {n//2} {get_ball_emoji("purple")} : vous avez 1 chance sur 2 de tirer l’une des 2 couleurs.",
-            f"Urne avec {n//3} {get_ball_emoji("yellow")}, {n//3} {get_ball_emoji("purple")} et {n//3} {get_ball_emoji("blue")} : vous avez 1 chance sur 3 de tirer l’une des 3 couleurs.",
+            f"Urne avec {n} {get_ball_emoji('yellow')} : vous êtes certain de tirer une boule {get_ball_emoji('yellow')}.",
+            f"Urne avec {n//2} {get_ball_emoji('yellow')} et {n//2} {get_ball_emoji('purple')} : vous avez 1 chance sur 2 de tirer l’une des 2 couleurs.",
+            f"Urne avec {n//3} {get_ball_emoji('yellow')}, {n//3} {get_ball_emoji('purple')} et {n//3} {get_ball_emoji('blue')} : vous avez 1 chance sur 3 de tirer l’une des 3 couleurs.",
         ]
     else:
         result = [
-            f"Urne avec {get_ball_emoji("yellow")} : vous êtes certain de tirer une boule {get_ball_emoji("yellow")}.",
-            f"Urne avec {get_ball_emoji("yellow")} et {get_ball_emoji("purple")} : vous ne connaissez pas vos chances de tirer chacune des 2 couleurs.",
-            f"Urne avec {get_ball_emoji("yellow")}, {get_ball_emoji("purple")} et {get_ball_emoji("blue")} : vous ne connaissez pas vos chances de tirer chacune des 3 couleurs.",
+            f"Urne avec {get_ball_emoji('yellow')} : vous êtes certain de tirer une boule {get_ball_emoji('yellow')}.",
+            f"Urne avec {get_ball_emoji('yellow')} et {get_ball_emoji('purple')} : vous ne connaissez pas vos chances de tirer chacune des 2 couleurs.",
+            f"Urne avec {get_ball_emoji('yellow')}, {get_ball_emoji('purple')} et {get_ball_emoji('blue')} : vous ne connaissez pas vos chances de tirer chacune des 3 couleurs.",
         ]
     return result
 
@@ -390,9 +390,9 @@ def get_results(win: bool) -> list:
 
     return [
         f"Vous {word} {n} jetons",
-        f"Boule {get_ball_emoji("yellow")} → vous {word} {n//2} jetons<br>Boule {get_ball_emoji("purple")}→ vous {word} {n*3//2} jetons",
-        f"Boule {get_ball_emoji("yellow")} → vous {word} {n//2} jetons<br>Boule {get_ball_emoji("purple")}→ vous {word} {n} jetons<br>Boule {get_ball_emoji("blue")} → vous {word} {n*3//2} jetons",
-        f"Boule {get_ball_emoji("yellow")} → vous {word} 0 jeton<br>Boule {get_ball_emoji("purple")}→ vous {word} {n*2} jetons",
+        f"Boule {get_ball_emoji('yellow')} → vous {word} {n//2} jetons<br>Boule {get_ball_emoji('purple')}→ vous {word} {n*3//2} jetons",
+        f"Boule {get_ball_emoji('yellow')} → vous {word} {n//2} jetons<br>Boule {get_ball_emoji('purple')}→ vous {word} {n} jetons<br>Boule {get_ball_emoji('blue')} → vous {word} {n*3//2} jetons",
+        f"Boule {get_ball_emoji('yellow')} → vous {word} 0 jeton<br>Boule {get_ball_emoji('purple')}→ vous {word} {n*2} jetons",
     ]
 
 
@@ -405,10 +405,10 @@ def get_boxes(known: bool) -> list:
         tier = n // 3
 
     return [
-        f"{n} boules {get_ball_emoji("yellow")}",
-        f"{demi} boules {get_ball_emoji("yellow")}<br>{demi} boules {get_ball_emoji("purple")}",
-        f"{tier} boules {get_ball_emoji("yellow")}<br>{tier} boules {get_ball_emoji("purple")}<br>{tier} boules {get_ball_emoji("blue")}",
-        f"{demi} boules {get_ball_emoji("yellow")}<br>{demi} boules {get_ball_emoji("purple")}",
+        f"{n} boules {get_ball_emoji('yellow')}",
+        f"{demi} boules {get_ball_emoji('yellow')}<br>{demi} boules {get_ball_emoji('purple')}",
+        f"{tier} boules {get_ball_emoji('yellow')}<br>{tier} boules {get_ball_emoji('purple')}<br>{tier} boules {get_ball_emoji('blue')}",
+        f"{demi} boules {get_ball_emoji('yellow')}<br>{demi} boules {get_ball_emoji('purple')}",
     ]
 
 
