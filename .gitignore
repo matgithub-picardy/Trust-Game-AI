@@ -15,6 +15,7 @@ ENV/
 
 # Ignorer fichiers secrets éventuels
 .env
+.env.json
 
 node_modules/
 
