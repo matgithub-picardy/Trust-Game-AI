@@ -1,8 +1,8 @@
-# Trust Game AI — Spec de Refonte Complète
+# Trust Game  Spec de Refonte Complète
 **Date** : 2026-04-08
-**Auteur** : Session de brainstorming Claude × Rita
-**Approche retenue** : Approche 3 — Refonte complète (back + front + UI/UX)
-**Contexte** : Expérimentation économique comportementale en labo, participants rémunérés, expérimentateur sur place.
+**Auteur** : Stephane
+**Approche retenue** : Refonte complète (back + front + UI/UX)
+**Contexte** : Expérimentation économique comportementale en labo, participants rémunérés, expérimentateur sur place. **Interface optimisée en priorité pour smartphone** (mobile-first).
 
 ---
 
@@ -12,7 +12,7 @@
 2. Renforcer la **sécurité et la configuration** de l'application
 3. Remettre en état la **logique backend** (questionnaire, randomisation GPT, risk_aversion)
 4. Reconstruire l'**expérience participant** avec un design system moderne, professionnel et rassurant
-5. **Ne rien supprimer** sans ordre explicite — tout code commenté reste en place
+
 
 ---
 
@@ -26,7 +26,7 @@
 | Design system | `_static/style.css` + tous les templates participant |
 | Hors périmètre | Tests (non requis), architecture oTree, WebSocket logic, modèle de données |
 
-**Stack confirmée** : oTree 5.11.3 / Python / Jinja2 / JS vanilla / CSS custom variables. React et Tailwind exclus (incompatibles avec l'architecture oTree).
+**Stack confirmée** : oTree 5.11.3 / Python / Jinja2 / JS vanilla / CSS custom variables. 
 
 ---
 
@@ -58,7 +58,7 @@ Un participant voit une somme à l'intro et une autre à la fin — biais expér
 
 **Problème** : Les pages Q1–Q5 (mesure de perception de l'IA) sont commentées dans `page_sequence`. Seules 4 pages `TestInput` bidon s'exécutent.
 
-**Action** : Décommenter Q1–Q5 et les réintégrer dans `page_sequence`. Commenter les `TestInput` à leur tour (sans les supprimer).
+**Action** : Décommenter Q1–Q5 et les réintégrer dans `page_sequence`. Supprimer les `TestInput` à leur tour.
 
 ### 3.4 Gestion d'erreur OpenAI absente
 
@@ -111,7 +111,7 @@ Les lire via `os.getenv('LOCAL_URL')` / `os.getenv('HEROKU_URL')`.
 **Actions** :
 - Extraire `CONVERSION_RATE = 0.5` en constante nommée en tête de fichier
 - Ajouter validation explicite côté back pour rejeter les valeurs `-1` (sentinelle) avant traitement
-- Réécrire `final_profit()` avec des noms de variables explicites (garder l'ancienne version commentée)
+- Réécrire `final_profit()` avec des noms de variables explicites
 - Ajouter des commentaires de section pour expliquer la logique d'index mapping
 
 ### 5.2 `trust_game/__init__.py` — Réactivation de `set_chat_options()`
@@ -173,11 +173,19 @@ Réécriture complète avec variables CSS :
   --font-display:   'DM Serif Display', Georgia, serif;
   --font-body:      'DM Sans', system-ui, sans-serif;
 
+  /* Espacements — généreux sur mobile pour les touch targets */
   --space-xs: 4px;   --space-sm: 8px;
   --space-md: 16px;  --space-lg: 24px;
   --space-xl: 40px;
 
+  /* Touch target minimum : 44px (Apple HIG / WCAG 2.5.5) */
+  --touch-target: 44px;
+
   --radius-sm: 6px;  --radius-md: 12px;  --radius-lg: 20px;
+
+  /* Breakpoints */
+  --bp-tablet:  768px;
+  --bp-desktop: 1024px;
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
   --shadow-md: 0 4px 16px rgba(15,36,71,0.10);
@@ -195,6 +203,8 @@ Réécriture complète avec variables CSS :
   }
 }
 ```
+
+**Approche mobile-first** : le CSS est écrit pour mobile en base, les media queries ajoutent des styles pour tablet (≥768px) puis desktop (≥1024px). Aucun style desktop-first.
 
 **Composants CSS nommés** : `.experiment-card`, `.chat-bubble`, `.token-input`, `.progress-stepper`, `.skeleton`, `.dots-loader`, `.toast`.
 
@@ -274,36 +284,54 @@ Transition fluide : `transition: color 1s, border-color 1s`.
 
 ### 6.6 Chat Interface — Refonte
 
-Layout en deux colonnes (P2P | GPT) sur écrans ≥ 1024px (résolution standard des labos). En dessous de 1024px, bascule automatique en onglets via `@media (max-width: 1023px)`. Les machines de labo étant supposées être ≥ 1024px, le layout colonnes est la vue par défaut et principale.
+**Approche mobile-first** : le layout de base (< 768px) est en **onglets** — un onglet "Discussion" et un onglet "Assistant IA". Sur écrans ≥ 1024px, bascule en deux colonnes côte à côte.
 
+**Mobile (défaut, < 1024px) — Onglets :**
 ```
-┌─────────────────────────────────────────────┐
-│  [Badge: Joueur A]        [Timer: 4:32 ●●] │
-├──────────────────┬──────────────────────────┤
-│  Discussion      │  Assistant IA            │
-│  (autre joueur)  │  (ChatGPT)               │
-│                  │                          │
-│  [Bulles]        │  [Bulles]                │
-│                  │  [● ● ● thinking]        │
-│                  │                          │
-├──────────────────┴──────────────────────────┤
-│  [Input ─────────────────────── Envoyer]   │
-└─────────────────────────────────────────────┘
+┌─────────────────────────────────┐
+│ [Joueur A]      [Timer 4:32 ●] │
+├────────────┬────────────────────┤
+│ Discussion │  Assistant IA      │  ← onglets actifs
+├────────────┴────────────────────┤
+│                                 │
+│  [Bulles du chat actif]         │
+│  [● ● ● thinking]               │
+│                                 │
+├─────────────────────────────────┤
+│ [Input ──────────── Envoyer]   │
+└─────────────────────────────────┘
+```
+
+**Desktop (≥ 1024px) — Deux colonnes :**
+```
+┌──────────────────────────────────────────────┐
+│  [Joueur A]              [Timer: 4:32 ●●]   │
+├───────────────────┬──────────────────────────┤
+│  Discussion       │  Assistant IA             │
+│  [Bulles]         │  [Bulles]                 │
+│                   │  [● ● ● thinking]         │
+├───────────────────┤                           │
+│ [Input  Envoyer]  │ [Input  Envoyer]          │
+└───────────────────┴──────────────────────────┘
 ```
 
 - **Badge rôle** : `Joueur A` / `Joueur B` toujours visible en haut
+- **Timer** : affiché en permanence, compact sur mobile (icône + chiffre), étendu sur desktop
 - **Bulles** : slide-in depuis le bas (`translateY(12px)→0` + `opacity: 0→1`, 200ms)
 - **Indicateur typing** : 3 points animés, visible seulement en chat P2P
-- **Erreur GPT** : message inline dans la colonne GPT, non bloquant
-- **Input dédié par colonne** : chaque colonne (P2P et GPT) a son propre champ de saisie et son propre bouton "Envoyer". Il n'y a pas d'input partagé. Le routage est implicite : l'input de la colonne P2P appelle `sendChatMessageCheapTalk()`, l'input de la colonne GPT appelle `sendChatMessageGPT()`. Pas d'ambiguïté de destination.
-- **Exception max-width** : la page GamePlay est l'unique exception au `max-width: 720px` du layout universel. Elle utilise `max-width: 960px` (ou 100% avec padding) pour que les deux colonnes de chat soient confortables sur écran labo ≥ 1024px.
+- **Erreur GPT** : message inline dans la zone GPT active, non bloquant
+- **Input dédié par zone** : chaque zone (P2P et GPT) a son propre champ de saisie et son propre bouton "Envoyer". L'input P2P appelle `sendChatMessageCheapTalk()`, l'input GPT appelle `sendChatMessageGPT()`.
+- **Touch targets** : bouton "Envoyer" ≥ 44px de hauteur, champ de saisie ≥ 44px
+- **Exception max-width** : GamePlay utilise `width: 100%` avec `padding: 0 var(--space-md)` sur mobile, et `max-width: 960px` sur desktop — aucune contrainte 720px ici.
 
 ### 6.7 Formulaire Token — Validation temps réel
 
 - Slider horizontal synchronisé avec champ numérique
+- Slider ≥ 44px de hauteur de zone tactile sur mobile (padding autour de la piste)
 - Aperçu dynamique : *"Vous envoyez 6 → l'autre joueur recevra 18 jetons"*
 - Animation aperçu au changement : `scale(1.05)→1` en 150ms
 - Validation : animation `shake` si valeur hors plage, message inline (pas d'alerte modale)
+- Bouton "Envoyer" : pleine largeur sur mobile (`width: 100%`), auto sur desktop
 
 ```css
 @keyframes shake {
@@ -327,8 +355,14 @@ Types : succès (vert), info (bleu), erreur (rouge), neutre (gris).
 
 ### 6.9 Barre de progression narrative
 
-En haut de chaque page :
+**Mobile** : version compacte — barre de progression linéaire + label texte. Les noms des étapes sont masqués (trop larges sur petit écran) et remplacés par un texte centré sous la barre :
 
+```
+[━━━━━━━━━━●━━━━━━━━━━━━━━━━━━━]
+      Étape 3 sur 5 — Risque
+```
+
+**Desktop (≥ 768px)** : version complète avec points nommés :
 ```
 ● ──────── ● ──────── ● ──────── ○ ──────── ○
 Accueil  Questionnaire  Risque  Jeu  Résultats
@@ -336,8 +370,9 @@ Accueil  Questionnaire  Risque  Jeu  Résultats
 ```
 
 - Points passés : remplis couleur primaire
-- Point actuel : pulsation légère
-- Points futurs : gris clair
+- Point actuel : pulsation légère (`@keyframes pulse`)
+- Points futurs : `var(--color-border)` gris clair
+- Sur mobile : la barre est une `<progress>` native stylisée ou un `<div>` avec `width: calc(X/Y * 100%)`
 
 **Injection de la variable `current_step`** : chaque page de chaque module oTree expose `current_step` via `vars_for_template()`. Exemple dans `trust_game/__init__.py` :
 ```python
@@ -386,22 +421,44 @@ setTimeout(() => {
 ```
 La classe `.results-loading` masque les `.result-row` via CSS et affiche des blocs `.skeleton` à leur place.
 
-### 6.12 Layout universel
+### 6.12 Layout universel — Mobile-first
 
-Toutes les pages participant partagent le même conteneur :
+Toutes les pages participant partagent le même conteneur. **Base mobile** :
 
 ```
-┌─────────────────────────────────────────┐
-│  [Titre expérience]    [Étape X/Y]      │
-│  [Barre de progression]                  │
-├─────────────────────────────────────────┤
-│                                         │
-│   [Contenu centré, max-width: 720px]    │
-│                                         │
-├─────────────────────────────────────────┤
-│         [ Bouton Suivant → ]            │
-└─────────────────────────────────────────┘
+┌─────────────────────────┐
+│ [Titre]     [Étape X/Y] │  ← header fixe, compact
+│ [━━━●━━━━━━━━━━━━━○━━━] │  ← barre de progression
+├─────────────────────────┤
+│                         │
+│   [Contenu full-width]  │  ← padding 16px h., scroll
+│   [avec padding 16px]   │
+│                         │
+├─────────────────────────┤
+│  [ Suivant →          ] │  ← bouton full-width, 52px
+└─────────────────────────┘
 ```
+
+**Sur desktop (≥ 768px)** :
+```
+┌──────────────────────────────────────────┐
+│  [Titre expérience]       [Étape X/Y]   │
+│  [━━━━━●━━━━━━━━━━━━━━━━━━━━━━━○━━━━━]  │
+├──────────────────────────────────────────┤
+│                                          │
+│     [Contenu centré, max-width: 640px]   │
+│                                          │
+├──────────────────────────────────────────┤
+│              [ Suivant → ]               │
+└──────────────────────────────────────────┘
+```
+
+**Règles mobiles** :
+- Bouton "Suivant" : `width: 100%`, `min-height: 52px`, texte `1rem`
+- Tous les boutons et inputs : `min-height: var(--touch-target)` (44px)
+- Padding horizontal : `var(--space-md)` (16px) sur mobile
+- Font-size corps : `1rem` minimum (jamais en dessous de 16px → pas de zoom forcé iOS)
+- Pas de `:hover` seul sans fallback tactile — toujours un `:active` ou `:focus` aussi
 
 ---
 
@@ -415,7 +472,8 @@ Toutes les pages participant partagent le même conteneur :
 | JS vanilla ? | Oui, amélioré | Natif oTree live system |
 | CSS variables ? | Oui | Design system léger et maintenable |
 | Google Fonts ? | Oui (DM Serif Display + DM Sans) | Servi localement en `.woff2` (`_static/fonts/`), CDN en fallback uniquement |
-| Suppression code ? | Jamais sans ordre | Règle absolue |
+| Responsive ? | Mobile-first | Smartphone = cible principale, desktop en media query |
+| Touch targets ? | 44px minimum | Apple HIG + WCAG 2.5.5, évite les erreurs de tap |
 
 ---
 
