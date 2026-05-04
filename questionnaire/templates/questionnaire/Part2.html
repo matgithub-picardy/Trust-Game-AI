@@ -1,0 +1,21 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Partie 2 sur 7</span>
+  <h1>Votre perception des outils IA</h1>
+  <p><em>Pour chaque affirmation ci-dessous, indiquez votre degré d'accord en cochant la case correspondante.<br>1 = Pas du tout d'accord ··· 7 = Tout à fait d'accord</em></p>
+
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q6' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q7' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q8' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q9' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q10' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q11' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q12' }}</div>
+
+  <div class="button-container mt-4">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}

@@ -1,47 +1,223 @@
-{{ block title }} Résultats {{ endblock }}
+{% extends "global/Page.html" %}
+{% block title %} Résultats finaux {% endblock %}
 
-{{ block content }}
+{% block content %}
 
-<ul>
-  <li>Show-up fee : <strong>{{ show_up_fee | to0 }}</strong></li>
-  <li>
-    <p><strong>Résultats du tirage au sort:</strong></p>
-    <ul>
-      <li>N° Décision : {{ chosen_decision }}</strong></li>
-      <li>Somme investie : {{ invested }}</li>
-      <li>Boule tirée : {{ ball_color }}</li>
-      <li>Somme initiale : {{ initial_amount | to0 }}</li>
-      <li>Profit associé : {{ profit_risk_aversion | to0 }}</li>
-      <li>Total de jetons tirage au sort: {{ initial_amount | to0 }} + {{ profit_risk_aversion | to0 }} = <strong>{{ gain_risk_aversion | to0 }}</strong></li>
-    </ul>
-  </li>
-  {{ if tg_role }}
-  <li>
-    <p>Jeu avec le partenaire:</p>
-      {{ if tg_role == "A" }}
-        <p>
-          Vous aviez {{ tg_endowment }} jetons, vous en avez envoyé {{ tg_sent }} à votre partenaire.
-          Cette somme a été multipliée par 3 en lui parvenant. Il vous en a retourné {{ tg_sent_back }}.
-        </p>
-        <p>Vos gains pour cette étape : {{ tg_endowment }} - {{ tg_sent }} + {{ tg_sent_back }} = <strong>{{ tg_gain | to0  }}</strong></p>
-      {{ else }}
-        <p>
-          Votre partenaire vous a envoyé {{ tg_sent }}. Cette somme a été multipliée par {{ tg_multiplier }} en vous parvenant.
-          Vous lui avez retourné {{ tg_sent_back }}.
-        </p>
-        <p>Vos gains pour cette étape : {{ tg_multiplier }} x {{ tg_sent }} - {{ tg_sent_back }} = <strong>{{ tg_gain | to0 }}</strong> </p>
-      {{ endif }}
-    
-  </li>
-  {{ endif }}
-  <li>
-    <p>
-      Votre gain total dans cette expérimentation : {{ show_up_fee | to0 }} + {{ gain_risk_aversion | to0 }} + {{ tg_gain | to0 }} = <strong>{{ gain_total | to0 }}</strong> </li>
-      En appliquant le taux de change, cela fait <strong>{{ converted_gain }}</strong> €.
+<div class="experiment-card results-loading" id="results-container">
+
+  <!-- Skeletons pendant le chargement -->
+  <div class="result-skeleton skeleton skeleton--block"></div>
+  <div class="result-skeleton skeleton skeleton--text"></div>
+  <div class="result-skeleton skeleton skeleton--text skeleton--w60"></div>
+  <div class="result-skeleton skeleton skeleton--text skeleton--w75"></div>
+
+  <!-- SECTION 1 — Participation -->
+  <div class="result-section" id="section-participation">
+    <div class="result-section__header">
+      <div>
+        <h3 class="result-section__title">
+          <i class="fa-solid fa-handshake"></i> Participation
+        </h3>
+        <p class="result-section__subtitle">Indemnité de présence</p>
+      </div>
+    </div>
+    <div class="result-section__body">
+      <div class="result-row" id="row-showup">
+        <span class="result-row__label">Show-up fee</span>
+        <span class="result-row__value">{{ show_up_fee | to0 }} jetons</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 — Tirage au sort -->
+  <div class="result-section" id="section-risk-aversion">
+    <div class="result-section__header">
+      <div>
+        <h3 class="result-section__title">
+          <i class="fa-solid fa-dice"></i> Tirage au sort
+        </h3>
+        <p class="result-section__subtitle">Résultats de l'aversion au risque</p>
+      </div>
+    </div>
+    <div class="result-section__body">
+      <div class="result-row" id="row-decision">
+        <span class="result-row__label">N° de la décision tirée</span>
+        <span class="result-row__value">{{ chosen_decision }}</span>
+      </div>
+      <div class="result-row" id="row-invested">
+        <span class="result-row__label">Somme que vous aviez investie</span>
+        <span class="result-row__value">{{ invested }}</span>
+      </div>
+      <div class="result-row" id="row-ball">
+        <span class="result-row__label">Couleur de la boule tirée</span>
+        <span class="result-row__value">{{ ball_color }}</span>
+      </div>
+      <div class="result-row" id="row-initial">
+        <span class="result-row__label">Somme initiale</span>
+        <span class="result-row__value">{{ initial_amount | to0 }} jetons</span>
+      </div>
+      <div class="result-row" id="row-profit-ra">
+        <span class="result-row__label">Profit du tirage</span>
+        <span class="result-row__value">{{ profit_risk_aversion | to0 }} jetons</span>
+      </div>
+      <div class="result-row result-row--section-total" id="row-gain-ra">
+        <span class="result-row__label">Sous-total tirage au sort</span>
+        <span class="result-row__value">{{ gain_risk_aversion | to0 }} jetons</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 — Jeu de confiance -->
+  {% if tg_role %}
+  <div class="result-section" id="section-trust-game">
+    <div class="result-section__header">
+      <div>
+        <h3 class="result-section__title">
+          <i class="fa-solid fa-people-arrows"></i> Jeu de confiance
+        </h3>
+        <p class="result-section__subtitle">Interaction avec votre partenaire</p>
+      </div>
+    </div>
+    <div class="result-section__body">
+      {% if tg_role == "A" %}
+      <div class="result-row" id="row-tg-role">
+        <span class="result-row__label">Votre rôle</span>
+        <span class="result-row__value">Joueur A (envoyeur)</span>
+      </div>
+      <div class="result-row" id="row-tg-detail">
+        <span class="result-row__label">Calcul de vos gains</span>
+        <span class="result-row__value">{{ tg_endowment }} − {{ tg_sent }} + {{ tg_sent_back }}</span>
+      </div>
+      {% else %}
+      <div class="result-row" id="row-tg-role">
+        <span class="result-row__label">Votre rôle</span>
+        <span class="result-row__value">Joueur B (receveur)</span>
+      </div>
+      <div class="result-row" id="row-tg-detail">
+        <span class="result-row__label">Calcul de vos gains</span>
+        <span class="result-row__value">{{ tg_multiplier }} × {{ tg_sent }} − {{ tg_sent_back }}</span>
+      </div>
+      {% endif %}
+      <div class="result-row result-row--section-total" id="row-tg-gain">
+        <span class="result-row__label">Sous-total jeu de confiance</span>
+        <span class="result-row__value">{{ tg_gain | to0 }} jetons</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- SECTION FINALE — Bilan -->
+  <div class="result-section result-section--final" id="section-total">
+    <div class="result-section__header">
+      <div>
+        <h3 class="result-section__title">Bilan final</h3>
+        <p class="result-section__subtitle">Récapitulatif de vos gains</p>
+      </div>
+    </div>
+    <div class="result-section__body">
+      <div class="result-row result-row--total" id="row-total">
+        <span class="result-row__label">Gain total (jetons)</span>
+        <span class="result-row__value">{{ gain_total | to0 }} jetons</span>
+      </div>
+      <div class="result-row result-row--total result-row--euros" id="row-euros">
+        <span class="result-row__label">Gain total (€)</span>
+        <span class="result-row__value result-row__value--big">{{ converted_gain }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Code participant + QR Code -->
+  <div class="participant-code-card" id="row-code">
+    <div class="participant-code-card__text">
+      <p class="participant-code-card__label">
+        <i class="fa-solid fa-key"></i> Votre code participant
+      </p>
+      <p class="participant-code-card__value">{{ player.participant.code }}</p>
+      <p class="participant-code-card__hint">Appuyez sur le QR code pour le copier et l'agrandir</p>
+    </div>
+    <div class="participant-code-card__qr" id="qrcode" title="Agrandir et copier"></div>
+  </div>
+
+  <!-- Remerciement -->
+  <div class="thank-you-message" id="row-thanks">
+    <p><strong>Merci pour votre participation !</strong></p>
+    <p><em>Un débriefing complet sur les objectifs de cette étude vous sera communiqué avant le versement de votre rémunération.</em></p>
+    <p><em>Si vous avez des questions, n'hésitez pas à contacter l'équipe de recherche.</em></p>
+  </div>
+
+</div>
+
+{{ next_button }}
+
+<!-- Overlay plein écran pour le QR (display:none = invisible par défaut, garanti) -->
+<div id="qr-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:10000; background:rgba(26,18,8,0.88); cursor:pointer;">
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:16px;">
+    <div id="qr-overlay-qr" style="padding:24px; background:#f7f3ec; border:3px solid #f0eade;"></div>
+    <p style="font-family:'DM Mono',monospace; font-size:1.4rem; font-weight:700; color:#f7f3ec; letter-spacing:0.15em; margin:0;">{{ player.participant.code }}</p>
+    <p style="font-family:'Jost',sans-serif; font-size:0.85rem; color:#f7f3ec; opacity:0.5; margin:0;">Appuyez n'importe où pour fermer</p>
+    <p id="qr-copied-msg" style="font-family:'Jost',sans-serif; font-size:0.9rem; color:#276749; background:#C6F6D5; padding:4px 16px; margin:0; opacity:0; transition:opacity 0.3s;">
+      <i class="fa-solid fa-check"></i> Code copié !
     </p>
-    <p>Notez-bien votre code: <strong>{{ player.participant.code }}</strong></p>
-</ul>
-    {{ next_button }}
-{{ endblock }}
+  </div>
+</div>
 
+<!-- QR Code library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var code = "{{ player.participant.code }}";
+    var overlay = document.getElementById('qr-overlay');
+    var qrSmall = document.getElementById('qrcode');
+    var qrBig = document.getElementById('qr-overlay-qr');
+
+    // Generate small QR (in-page, 120px)
+    if (qrSmall) {
+      new QRCode(qrSmall, {
+        text: code, width: 120, height: 120,
+        colorDark: "#1a1208", colorLight: "#f7f3ec",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    // Generate big QR (overlay, 280px)
+    if (qrBig) {
+      new QRCode(qrBig, {
+        text: code, width: 280, height: 280,
+        colorDark: "#1a1208", colorLight: "#f7f3ec",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    // Click small QR → copy code + open fullscreen
+    qrSmall.addEventListener('click', function () {
+      // Copy to clipboard
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code);
+      }
+      // Show overlay
+      overlay.style.display = 'block';
+      // Flash "code copié" message
+      var msg = document.getElementById('qr-copied-msg');
+      msg.style.opacity = '1';
+      setTimeout(function () { msg.style.opacity = '0'; }, 2500);
+    });
+
+    // Click anywhere on overlay → close
+    overlay.addEventListener('click', function () {
+      overlay.style.display = 'none';
+    });
+
+    // Progressive reveal animation
+    var container = document.getElementById('results-container');
+    var items = container.querySelectorAll('.result-section, .participant-code-card, .thank-you-message');
+    setTimeout(function () {
+      container.classList.remove('results-loading');
+      items.forEach(function (el, i) {
+        setTimeout(function () { el.classList.add('slide-in'); }, i * 200);
+      });
+    }, 400);
+  });
+</script>
+
+{% endblock %}

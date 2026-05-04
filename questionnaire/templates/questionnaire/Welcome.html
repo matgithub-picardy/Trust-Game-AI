@@ -1,12 +1,13 @@
-{{ block title }} Bienvenue {{ endblock }} {{ block content }}
-<div class="card">
-  <div class="card-body">
-    <p>
-      Vous allez maintenant répondre à plusieurs questions concernant votre
-      perception de l'IA.
-    </p>
-
+{% extends "global/Page.html" %}
+{% block title %}Questionnaire{% endblock %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Questionnaire</span>
+  <h1>Perception de l'IA</h1>
+  <p>Vous allez maintenant répondre à plusieurs questions concernant votre perception de l'intelligence artificielle.</p>
+  <div class="alert-box">Il n'y a pas de bonne ou mauvaise réponse. Répondez spontanément.</div>
+  <div class="button-container">
     {{ next_button }}
   </div>
 </div>
-{{ endblock }}
+{% endblock %}

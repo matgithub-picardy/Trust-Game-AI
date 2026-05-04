@@ -1,17 +1,20 @@
-from otree.api import *
-
-
-doc = """
-Your app description
 """
+Application oTree pour la synthèse finale des gains.
+Calcule et affiche le montant total accumulé par le participant à travers
+toutes les applications de la session (Show Up Fee, Risk Aversion, Trust Game).
+"""
+from otree.api import *
+import settings
 
 
 class C(BaseConstants):
+    """Paramètres financiers globaux pour le calcul des gains finaux."""
     NAME_IN_URL = "results"
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
-    SHOW_UP_FEE = cu(10)
-    CONVERSION_RATE = 0.5
+    
+    SHOW_UP_FEE = cu(settings.SHOW_UP_FEE)
+    CONVERSION_RATE = settings.CONVERSION_RATE
 
 
 class Subsession(BaseSubsession):
@@ -23,17 +26,20 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    gain_total = models.CurrencyField()
-    gain_euros = models.FloatField()
+    """Stocke le bilan financier final du participant."""
+    gain_total = models.CurrencyField(doc="Somme totale des gains en jetons (toutes applis confondues).")
+    gain_euros = models.FloatField(doc="Conversion finale des jetons en euros réels.")
 
 
 # PAGES
-class Intro(Page):
-    pass
+
 
 
 class Results(Page):
+    """Page finale récapitulant l'ensemble des gains de la session expérimentale."""
+    
     def vars_for_template(player: Player):
+        """Agrège les résultats stockés dans participant.vars et calcule le gain final."""
         player.gain_total = C.SHOW_UP_FEE
 
         vars = player.participant.vars
@@ -41,7 +47,8 @@ class Results(Page):
 
         tg_role = vars.get("tg_role")
         vars_tg = {}
-        # pour que le module results fonctionne meme sans jouer le tg
+
+        # Intégration optionnelle des résultats du Trust Game (si joué)
         if tg_role:
             endowment = int(vars.get("tg_endowment"))
             mult = int(vars.get("tg_multiplier"))
@@ -81,4 +88,4 @@ class Results(Page):
         } | vars_tg
 
 
-page_sequence = [Intro, Results]
+page_sequence = [Results]

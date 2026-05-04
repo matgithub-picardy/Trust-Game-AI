@@ -1,19 +1,8 @@
-{% load static %}
+{% extends "global/Page.html" %}
+{% block title %}Décision {{ player.confirmed_decision_count }} - Investissez vos jetons{% endblock %}
+{% block content %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'style.css' %}">
-
-{% endblock %}
-
-{% block title %}
-
-  <h1 class="page-title"> Décision {{ player.confirmed_decision_count }} - Investissez vos jetons </h1>
-
-{% endblock %}
-
-{{ block content }}
-
-<p><strong style="color: red">Numéro de la décision selon cahier des charges : {{ real_current_decision }}</strong></p>
+<span class="eyebrow">Décision n°{{ real_current_decision }}</span>
 
 <div class="alert-box">
     Vous pouvez tester les effets potentiels des différents choix possibles en cliquant sur les valeurs du menu déroulant. 
@@ -21,22 +10,21 @@
     Ainsi, vous pouvez <strong>tester</strong> les effets potentiels des différents choix possibles en <strong>cliquant</strong> sur les valeurs du <strong>menu</strong> déroulant <strong>sans cliquer</strong> sur le <strong>bouton</strong> « validez votre choix ». 
 </div>
 
-<div class="container">
+<div class="experiment-card">
     <div class="decision-card">
         <div class="question-section">
 
             <h5><strong>Combien souhaitez-vous investir ?</strong></h5>
 
-            <div class="investment-form">
-                {{ if real_current_decision == 1 }}
-                    <span>{{ form.inv1.label }}</span> {{ form.inv1 }} jetons.
-                {{ elif real_current_decision == 2 }}
-                    <span>{{ form.inv2.label }}</span> {{ form.inv2 }} jetons.
-                {{ elif real_current_decision == 3 }}
-                    <span>{{ form.inv3.label }}</span> {{ form.inv3 }} jetons.
-                {{ elif real_current_decision == 4 }}
-                    <span>{{ form.inv4.label }}</span> {{ form.inv4 }} jetons.
-                {{ endif }}
+            <div class="token-input">
+                <div class="token-input__row">
+                    <div class="token-input__slider-wrap">
+                        <input type="range" id="amount_slider" name="{{ field_name }}" min="0" max="{{ C.MAX_INVESTMENT }}" value="0" step="1" required>
+                    </div>
+                </div>
+                <div id="amount_error" class="token-input__error">
+                    Veuillez entrer un montant valide entre 0 et {{ C.MAX_INVESTMENT }}.
+                </div>
             </div>
 
         </div>
@@ -68,16 +56,46 @@
 
 
 <div class="button-container">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
     {% block next_button %}
       <button class="otree-btn-next btn btn-primary">Validez votre choix</button>
     {% endblock %}
 </div>
 
-{{ include_sibling 'scripts.html'}} 
+<script>
+(function() {
+  var STORAGE_KEY = 'ra_{{ participant.code }}_dec_' + '{{ field_name }}';
 
-{{ include_sibling 'style.html'}}
+  document.addEventListener('DOMContentLoaded', function() {
+    var slider = document.getElementById('amount_slider');
+    if (!slider) return;
 
-{{ endblock }}
+    // Restauration depuis localStorage
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved !== null && saved !== '') {
+      slider.value = saved;
+      slider.dispatchEvent(new Event('change'));
+    }
+
+    // Sauvegarde à chaque changement
+    slider.addEventListener('change', function() {
+      localStorage.setItem(STORAGE_KEY, this.value);
+    });
+
+    // Sauvegarde au submit
+    var form = document.querySelector('form');
+    if (form) form.addEventListener('submit', function() {
+      localStorage.setItem(STORAGE_KEY, slider.value);
+    });
+  });
+})();
+</script>
+
+
+
+{{ include_sibling 'scripts.html'}}
+
+{% endblock %}
 
 
 
