@@ -1,14 +1,14 @@
-{{ block title }} Questionnaire terminé {{ endblock }} {{ block content }}
-<div class="card">
-  <div class="card-body">
-    <h3>Merci pour votre participation !</h3>
-    <p>
-      Le questionnaire est maintenant terminé. Nous vous remercions d'avoir pris
-      le temps de répondre à toutes les questions.
-    </p>
-    <p>Vos réponses ont été enregistrées avec succès.</p>
-
+{% extends "global/Page.html" %}
+{% block title %}Questionnaire terminé{% endblock %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Questionnaire</span>
+  <h1>Merci pour votre participation !</h1>
+  <p>Le questionnaire est maintenant terminé. Nous vous remercions d'avoir pris le temps de répondre à toutes les questions.</p>
+  <p>Vos réponses ont été enregistrées avec succès.</p>
+  <div class="button-container">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
     {{ next_button }}
   </div>
 </div>
-{{ endblock }}
+{% endblock %}

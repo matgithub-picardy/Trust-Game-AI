@@ -1,37 +1,45 @@
+"""
+Application oTree pour la mesure de l'aversion au risque et à l'ambiguïté.
+
+Description :
+- Tâche de comptage de chiffres (PI) rémunérée à hauteur de C.ENDOWMENT.
+- Série de 8 décisions d'investissement (Risque/Ambiguïté) en jetons et par tirage.
+- Tirage au sort d'une décision finale pour déterminer le gain additionnel.
+"""
 from otree.api import *
 import random
 
-doc = """
-App oTree : risk_aversion
-
-Description : 
-- une tâche rémunérée qui permet de gagner C.ENDOWMENT jetons
-- une série de jeux de décisions où le hasard joue un rôle
-- une seule des décisions est tirée au sort pour déterminer le gain ou la perte.
-
-Suite à des modifications de dernière minute, j'ai dû rajouter des fonctionnalités à la volée, en appliquant des rustines par-ci par là. 
-J'en suis conscient mais je n'ai pas le temps de refaire proprement.
-
-Auteur : Matthieu Comme (LEFMI)
-Version : oTree 5+
-"""
-
 
 class C(BaseConstants):
+    """Constantes globales pour la mesure d'aversion au risque."""
     NAME_IN_URL = "risk_aversion"
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
-    ENDOWMENT = cu(30)  # somme gagnée à la fin de la tâche
+    
+    ENDOWMENT = cu(30)  # Rémunération de la tâche initiale
     MAX_INVESTMENT = 10
+    
+    # Données pour la tâche de comptage (PI)
     PI_DIGITS = (
         "141 592 653 589 793 238 462 643 383 279 502 884 197 169 399 375 10"
         "5 820 974 944 592 307 816 406 286 208 998 628 034 825 342 117 067 9"
         "82 148 086 513 282 306 647 093 844 609 550 582 231 725 359 408 128"
         "48 111 745 028 410 270 193 852 110 555 964 462 294 895 493 038 196"
     )
-    BALL_NUMBER = 60  # nombre total de boules dans l'urne
-    CONVERSION_RATE = 0.5
-    # RG, AG, RP, AP, CRG, CAG, CRP, CAP
+    BALL_NUMBER = 60  # Population totale de l'urne
+    CONVERSION_RATE = 0.5 # Taux de conversion jetons -> euros
+    
+    # Mapping des indices de décision vers les champs de données
+    FIELD_MAP = {
+        1: 'dec_risque_gain',
+        2: 'dec_ambig_gain',
+        3: 'dec_risque_perte',
+        4: 'dec_ambig_perte',
+        5: 'dec_comp_risque_gain',
+        6: 'dec_comp_ambig_gain',
+        7: 'dec_comp_risque_perte',
+        8: 'dec_comp_ambig_perte'
+    }
 
 
 class Subsession(BaseSubsession):
@@ -43,66 +51,65 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    """Contenu des données par participant pour l'application risk_aversion."""
+    
+    # Positionnement aléatoire pour l'export des données
+    ordre_rg = models.IntegerField(initial=-1, doc="Ordre d'affichage de Risque Gain")
+    ordre_ag = models.IntegerField(initial=-1, doc="Ordre d'affichage de Ambiguïté Gain")
+    ordre_rp = models.IntegerField(initial=-1, doc="Ordre d'affichage de Risque Perte")
+    ordre_ap = models.IntegerField(initial=-1, doc="Ordre d'affichage de Ambiguïté Perte")
+    ordre_crg = models.IntegerField(initial=-1, doc="Ordre d'affichage de Complément Risque Gain")
+    ordre_cag = models.IntegerField(initial=-1, doc="Ordre d'affichage de Complément Ambiguïté Gain")
+    ordre_crp = models.IntegerField(initial=-1, doc="Ordre d'affichage de Complément Risque Perte")
+    ordre_cap = models.IntegerField(initial=-1, doc="Ordre d'affichage de Complément Ambiguïté Perte")
 
-    # ces indices facilitent la lecture dans la base de données (ils sont = aux real_index)
-    # sans devoir changer toute la structure logique
-    # risque gain, ambiguite gain, ..., complement risque perte, complement ambiguite perte
-    ordre_rg = models.IntegerField(initial=-1)
-    ordre_ag = models.IntegerField(initial=-1)
-    ordre_rp = models.IntegerField(initial=-1)
-    ordre_ap = models.IntegerField(initial=-1)
-    ordre_crg = models.IntegerField(initial=-1)
-    ordre_cag = models.IntegerField(initial=-1)
-    ordre_crp = models.IntegerField(initial=-1)
-    ordre_cap = models.IntegerField(initial=-1)
-
-    # Sommes investies à chaque décision
-    # l'ordre suit celui défini juste au dessus
-    inv1 = models.IntegerField(
+    # Décisions 1 à 4 (Investissement direct)
+    dec_risque_gain = models.IntegerField(
         choices=[(i, str(i)) for i in range(0, C.MAX_INVESTMENT + 1)],
         initial=-1,
         label="Je décide d'investir :",
         blank=False,
     )
-    inv2 = models.IntegerField(
+    dec_ambig_gain = models.IntegerField(
         choices=[(i, str(i)) for i in range(0, C.MAX_INVESTMENT + 1)],
         initial=-1,
         label="Je décide d'investir :",
     )
-    inv3 = models.IntegerField(
+    dec_risque_perte = models.IntegerField(
         choices=[(i, str(i)) for i in range(0, C.MAX_INVESTMENT + 1)],
         initial=-1,
         label="Je décide d'investir :",
     )
-    inv4 = models.IntegerField(
+    dec_ambig_perte = models.IntegerField(
         choices=[(i, str(i)) for i in range(0, C.MAX_INVESTMENT + 1)],
         initial=-1,
         label="Je décide d'investir :",
     )
-    inv5 = models.StringField(
+    
+    # Décisions 5 à 8 (Choix de tirage)
+    dec_comp_risque_gain = models.StringField(
         choices=["A", "B", "C", "D"], label="Je choisis le tirage :"
     )
-    inv6 = models.StringField(
+    dec_comp_ambig_gain = models.StringField(
         choices=["A", "B", "C", "D"], label="Je choisis le tirage :"
     )
-    inv7 = models.StringField(
+    dec_comp_risque_perte = models.StringField(
         choices=["A", "B", "C", "D"], label="Je choisis le tirage :"
     )
-    inv8 = models.StringField(
+    dec_comp_ambig_perte = models.StringField(
         choices=["A", "B", "C", "D"], label="Je choisis le tirage :"
     )
 
-    # indice réel de la décision choisie
-    real_chosen_decision = models.IntegerField(initial=-1)
+    # État du tirage final et résultats
+    real_chosen_decision = models.IntegerField(initial=-1, doc="Indice réel de la décision tirée au sort.")
+    ball_color = models.StringField(initial="", doc="Couleur de la boule résultant du tirage.")
+    profit = models.CurrencyField(initial=0, doc="Gain ou perte généré par la décision finale.")
 
-    ball_color = models.StringField(initial="")  # couleur de la boule
-    profit = models.CurrencyField(initial=0)  # profit décision
-
-    # chiffre à compter lors de la tâche, généré dans GeneralInfo
-    target_digit = models.IntegerField(initial=0)
+    # Tâche préliminaire (PI)
+    target_digit = models.IntegerField(initial=0, doc="Chiffre cible à compter dans PI.")
     pi_count = models.IntegerField(label="Combien de fois ce chiffre apparaît-il ?")
 
-    # l'ordre des decisions 1 à 8 étant randomisés, ces indices sont ceux correspondant au cahier des charges
+    # Mapping interne pour la randomisation
     real_index_1 = models.IntegerField(initial=-1)
     real_index_2 = models.IntegerField(initial=-1)
     real_index_3 = models.IntegerField(initial=-1)
@@ -112,88 +119,77 @@ class Player(BasePlayer):
     real_index_7 = models.IntegerField(initial=-1)
     real_index_8 = models.IntegerField(initial=-1)
 
-    # compteur suivant l'avancée dans les decisions
-    current_decision = models.IntegerField(initial=1)
-
+    current_decision = models.IntegerField(initial=1, doc="Numéro de l'étape de décision en cours.")
     confirmed_decision_count = models.IntegerField(initial=1)
-    # indice relatif de la décision tirée au sort
-    chosen_decision = models.IntegerField(initial=-1)
+    chosen_decision = models.IntegerField(initial=-1, doc="Indice relatif affiché au joueur pour le résultat.")
 
-    # retourne l'indice réel de décision, conforme au cahier des charges
     def get_real_index(self, i=None) -> int:
+        """Retourne l'indice réel (1-8) correspondant à la position d'affichage i."""
         if i is None:
             i = self.current_decision
         if 1 <= i <= 8:
             return getattr(self, f"real_index_{i}")
 
     def get_all_real_index(self) -> list:
+        """Récupère la liste complète du mapping de randomisation."""
         return [getattr(self, f"real_index_{i}") for i in range(1, 9)]
 
-    # opération inverse de la fonction précédente
     def get_index_from_real(self, real: int):
+        """Détermine la position d'affichage d'une décision réelle donnée."""
         real_index_list = [getattr(self, f"real_index_{i}") for i in range(1, 9)]
         return real_index_list.index(real) + 1
 
-    # set la correspondance entre l'indice visible et le réel indice
     def init_real_index(self):
+        """Initialise le mapping aléatoire des décisions au début de la session pour un joueur."""
         index_map = create_index_map()
         set_ordre_risque_ambiguite(self, index_map)
         for i in range(1, 9):
             setattr(self, f"real_index_{i}", index_map[i - 1])
 
-    # retourne vrai si la condition d'apparition de la décision real_index est remplie, faux sinon
     def condition_met(self, real_index: int) -> bool:
-
-        # conditions d'affichage des décisions 5 à 8
-        condition1 = self.inv1 == C.MAX_INVESTMENT
-        condition2 = self.inv2 == C.MAX_INVESTMENT
-        condition3 = self.inv3 == 0
-        condition4 = self.inv4 == 0
+        """Vérifie si les conditions d'affichage pour les décisions complexes (5-8) sont remplies."""
+        condition1 = self.dec_risque_gain == C.MAX_INVESTMENT
+        condition2 = self.dec_ambig_gain == C.MAX_INVESTMENT
+        condition3 = self.dec_risque_perte == 0
+        condition4 = self.dec_ambig_perte == 0
 
         match real_index:
-            case 5:
-                result = condition1
-            case 6:
-                result = condition2
-            case 7:
-                result = condition3
-            case 8:
-                result = condition4
-
+            case 5: result = condition1
+            case 6: result = condition2
+            case 7: result = condition3
+            case 8: result = condition4
+            case _: result = True
         return result
 
-    # prend en entrée un indice réel
-    # retourne l'indice visible par le joueur en prenant en compte celles qui sont masquées par des conditions
     def get_visible_index(self, indice) -> int:
+        """Calcule l'indice séquentiel visible par le participant, en sautant les décisions masquées."""
         all_real_index = self.get_all_real_index()
         matching_index = all_real_index.index(indice) + 1
 
         if indice <= 4:
             return matching_index
 
-        result = 4  # les 4 premières sont toujours visibles
-
+        result = 4  # Les 4 premières décisions sont toujours affichées
         for i in range(4, matching_index):
             if self.condition_met(all_real_index[i]):
                 result += 1
-
         return result
 
-    # conserve les infos importantes concernant la décision tirée au sort pour les afficher à la toute fin de l'expérience
     def set_participant_vars(self):
+        """Exporte les résultats du tirage final vers participant.vars pour synthèse globale."""
         bc = self.ball_color
-        """
-        if bc is "yellow":
+        
+        # Traduction des noms de couleurs pour l'interface finale
+        if bc == "yellow":
             bc = "jaune"
-        elif bc is "purple":
+        elif bc == "purple":
             bc = "violette"
         else:
             bc = "bleue"
-        """
 
         vars = self.participant.vars
         vars["chosen_decision"] = self.chosen_decision
-        vars["invested"] = getattr(self, f"inv{self.real_chosen_decision}")
+        vars["invested"] = getattr(self, C.FIELD_MAP[self.real_chosen_decision])
         vars["ball_color"] = bc
         vars["initial_amount"] = C.ENDOWMENT
         vars["profit_risk_aversion"] = self.profit
@@ -203,29 +199,36 @@ class Player(BasePlayer):
 # ----- FONCTIONS -----
 
 
-# crée un ordre aléatoire de décisions. exemple : [4, 1, 3, 2, 7, 5, 8, 6]
-# 1-4 sont première moitié de liste, 5-8 deuxième moitié
+# --- Logique d'index mapping ---
+#
+# Les 8 décisions du cahier des charges sont présentées dans un ordre aléatoire au participant.
+# On distingue deux groupes :
+#   - Décisions 1-4 : gain/perte avec investissement en jetons (int)
+#   - Décisions 5-8 : gain/perte avec choix de tirage (lettre A-D)
+# L'ordre est randomisé à l'intérieur de chaque groupe, mais le groupe 1-4
+# est toujours présenté avant le groupe 5-8.
+#
+# Exemple de mapping généré : [3, 1, 4, 2, 6, 8, 5, 7]
+# → la 1ère décision affichée correspond à la décision réelle n°3, etc.
+#
+# Les attributs "ordre_rg", "ordre_ag" etc. stockent la position d'affichage
+# de chaque type de décision (RG = Risque Gain, AG = Ambiguïté Gain, etc.)
+# pour faciliter la lecture des données exportées.
+
 def create_index_map() -> list:
-    liste1 = [1, 2, 3, 4]
-    liste2 = [5, 6, 7, 8]
+    """Génère un ordre aléatoire des 8 décisions, en conservant le bloc 1-4 avant 5-8."""
+    groupe_1_4 = [1, 2, 3, 4]
+    groupe_5_8 = [5, 6, 7, 8]
+    random.shuffle(groupe_1_4)
+    random.shuffle(groupe_5_8)
+    return groupe_1_4 + groupe_5_8
 
-    random.shuffle(liste1)
-    random.shuffle(liste2)
 
-    return liste1 + liste2
-
-
-# définit ordre_rg, ordre_ag etc...
 def set_ordre_risque_ambiguite(player: Player, index_map: list):
+    """Stocke la position d'affichage de chaque type de décision pour l'export des données."""
     attr_names = [
-        "ordre_rg",
-        "ordre_ag",
-        "ordre_rp",
-        "ordre_ap",
-        "ordre_crg",
-        "ordre_cag",
-        "ordre_crp",
-        "ordre_cap",
+        "ordre_rg", "ordre_ag", "ordre_rp", "ordre_ap",
+        "ordre_crg", "ordre_cag", "ordre_crp", "ordre_cap"
     ]
     for attr, n in zip(attr_names, range(1, 9)):
         setattr(player, attr, index_map.index(n) + 1)
@@ -239,10 +242,10 @@ def display_logic(player: Player) -> bool:
     max = C.MAX_INVESTMENT
     result = (
         i <= 4
-        or (i == 5 and player.inv1 == max)
-        or (i == 6 and player.inv2 == max)
-        or (i == 7 and player.inv3 == 0)
-        or (i == 8 and player.inv4 == 0)
+        or (i == 5 and player.dec_risque_gain == max)
+        or (i == 6 and player.dec_ambig_gain == max)
+        or (i == 7 and player.dec_risque_perte == 0)
+        or (i == 8 and player.dec_ambig_perte == 0)
     )
     return result
 
@@ -257,63 +260,71 @@ def getTemplate(player: Player) -> dict:
         "chosen_decision": player.chosen_decision,
         "real_chosen_decision": player.real_chosen_decision,
         "real_index": player.get_all_real_index(),
-        "inv1_4": [player.inv1, player.inv2, player.inv3, player.inv4],
+        "inv1_4": [player.dec_risque_gain, player.dec_ambig_gain, player.dec_risque_perte, player.dec_ambig_perte],
         "inv5_8": [
-            player.field_maybe_none("inv5"),
-            player.field_maybe_none("inv6"),
-            player.field_maybe_none("inv7"),
-            player.field_maybe_none("inv8"),
+            player.field_maybe_none("dec_comp_risque_gain"),
+            player.field_maybe_none("dec_comp_ambig_gain"),
+            player.field_maybe_none("dec_comp_risque_perte"),
+            player.field_maybe_none("dec_comp_ambig_perte"),
         ],
     }
 
 
-# retourne la couleur de la boule tirée au hasard
-def get_ball_color(is_blue: bool) -> str:
-    i = random.randint(0, (1 + is_blue))
-    if i == 0:
-        result = "yellow"
-    elif i == 1:
-        result = "purple"
-    else:
-        result = "blue"
-    return result
+def get_ball_color(has_blue_ball: bool) -> str:
+    """Tire au hasard une couleur de boule (Jaune, Violette ou Bleue si applicable)."""
+    i = random.randint(0, (1 + has_blue_ball))
+    if i == 0: return "yellow"
+    if i == 1: return "purple"
+    return "blue"
 
 
-# retourne l'indice réel de la décision tirée au sort
 def get_final_decision(player: Player) -> int:
+    """Tire au sort une décision valide parmi celles effectivement présentées au participant."""
     decisions = [
-        player.inv1,
-        player.inv2,
-        player.inv3,
-        player.inv4,
-        player.field_maybe_none("inv5"),
-        player.field_maybe_none("inv6"),
-        player.field_maybe_none("inv7"),
-        player.field_maybe_none("inv8"),
+        player.dec_risque_gain,
+        player.dec_ambig_gain,
+        player.dec_risque_perte,
+        player.dec_ambig_perte,
+        player.field_maybe_none("dec_comp_risque_gain"),
+        player.field_maybe_none("dec_comp_ambig_gain"),
+        player.field_maybe_none("dec_comp_risque_perte"),
+        player.field_maybe_none("dec_comp_ambig_perte"),
     ]
     while True:
         i = random.randint(1, 8)
-        if decisions[i - 1] is not None:
+        value = decisions[i - 1]
+        if value is not None and value != -1:
             break
     return i
 
 
 # retourne le profit final
 def final_profit(player: Player) -> Currency:
+    """
+    Calcule le profit de la décision tirée au sort.
+    Étapes :
+      1. Tirer une décision valide (non -1, non None)
+      2. Récupérer la mise correspondante
+      3. Tirer la couleur de boule (bleue uniquement possible pour le tirage "C" des décisions 5-8)
+      4. Calculer le profit selon le type de décision (1-2, 3-4, ou 5-8)
+    """
+    chosen_real_index = get_final_decision(player)
+    player.real_chosen_decision = chosen_real_index
+    player.chosen_decision = player.get_visible_index(chosen_real_index)
 
-    i = player.real_chosen_decision = get_final_decision(player)
-    player.chosen_decision = player.get_visible_index(i)
-    invested = getattr(player, f"inv{i}")  # somme investie à cette décision
+    invested = getattr(player, C.FIELD_MAP[chosen_real_index])
 
-    # tirage de la boule, bleue uniquement présente si tirage = C
-    ball_color = get_ball_color(False) if invested != "C" else get_ball_color(True)
-    profit = 0
-    if i == 1 or i == 2:
+    # La boule bleue n'existe que pour le tirage "C" des décisions 5-8
+    has_blue_ball = (invested == "C")
+    ball_color = get_ball_color(has_blue_ball)
+
+    if chosen_real_index in (1, 2):
         profit = profit_1_2(invested, ball_color)
-    elif i == 3 or i == 4:
+    elif chosen_real_index in (3, 4):
         profit = profit_3_4(invested, ball_color)
     else:
-        profit = profit_5_8(i, invested, ball_color)
+        profit = profit_5_8(chosen_real_index, invested, ball_color)
+
     player.ball_color = ball_color
     return cu(profit)
 
@@ -480,6 +491,10 @@ class InvestmentConfirm(Page):
 
 
 class InvestmentIntro1_4(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.current_decision == 1
+
     def vars_for_template(player: Player):
         return {"ball_number_per_color": C.BALL_NUMBER // 2} | getTemplate(player)
 
@@ -488,19 +503,28 @@ class InvestmentDecision1_4(Page):
     form_model = "player"
 
     def get_form_fields(player: Player):
-        i = str(getattr(player, f"real_index_{player.current_decision}"))
-        return ["inv" + i]
+        i = getattr(player, f"real_index_{player.current_decision}")
+        return [C.FIELD_MAP[i]]
 
     def vars_for_template(player: Player):
-        return getTemplate(player)
+        i = getattr(player, f"real_index_{player.current_decision}")
+        return getTemplate(player) | {"field_name": C.FIELD_MAP[i]}
+
+    @staticmethod
+    def error_message(player: Player, values):
+        """Bloque la soumission si la valeur est la sentinelle -1 (champ non rempli)."""
+        field = C.FIELD_MAP[getattr(player, f"real_index_{player.current_decision}")]
+        val = values.get(field)
+        if val is None or val == -1:
+            return {field: "Veuillez s\u00e9lectionner un montant avant de valider."}
 
 
 class InvestmentDecision5_8(Page):
     form_model = "player"
 
     def get_form_fields(player: Player):
-        i = str(player.get_real_index())
-        return ["inv" + i]
+        i = player.get_real_index()
+        return [C.FIELD_MAP[i]]
 
     def is_displayed(player: Player):
         return display_logic(player)
@@ -524,6 +548,7 @@ class InvestmentDecision5_8(Page):
         return getTemplate(player) | {
             "rows": zip(["A", "B", "C", "D"], get_boxes(known), get_results(win)),
             "li_items": get_li_items_5_8(known),
+            "field_name": C.FIELD_MAP[player.get_real_index()],
         }
 
 
@@ -539,20 +564,15 @@ class TirageFinal(Page):
 
 
 class Fin(Page):
-    # pour essayer plusieurs tirages consécutifs
-    # def is_displayed(player: Player):
-    #    player.profit = final_profit(player)
-    #    player.payoff += player.profit
-    #    return True
-
+    """Page finale récapitulant les gains de l'application risk_aversion."""
     def vars_for_template(player: Player):
         return getTemplate(player) | {
             "initial_amount": C.ENDOWMENT,
-            "invested": getattr(player, f"inv{player.real_chosen_decision}"),
+            "invested": getattr(player, C.FIELD_MAP[player.real_chosen_decision]),
             "ball_color": player.ball_color,
             "profit_risk_aversion": player.profit,
             "total_risk_aversion": player.payoff,
-            "participant.payoff": player.participant.payoff,
+            "participant_payoff": player.participant.payoff_plus_participation_fee(),
         }
 
     def before_next_page(player: Player, timeout_happened):

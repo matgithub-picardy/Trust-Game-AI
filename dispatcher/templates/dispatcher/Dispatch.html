@@ -1,11 +1,18 @@
-{% extends "global/Page.html" %} {% block content %}
-<div class="container" style="max-width: 600px; margin: 0 auto">
-  <h3 class="text-center mb-4">Début de l'expérimentation</h3>
+{% extends "global/Page.html" %}
 
-  <div class="alert alert-info" style="text-align: center;">
-    <a {{ link }}>Cliquez pour commencer</a>
+{% block title %}Début de l'expérimentation{% endblock %}
+
+{% block content %}
+<div class="experiment-card">
+
+  <span class="eyebrow">Groupe {{ group_number }}</span>
+  <h1>L'expérience va commencer</h1>
+
+  <p>Vous avez été assigné au <strong>groupe {{ group_number }}</strong>. Cliquez sur le bouton ci-dessous pour rejoindre votre session.</p>
+
+  <div class="button-container">
+    <a {{ link }} class="btn btn-primary">Rejoindre la session</a>
   </div>
 
-  
 </div>
 {% endblock %}

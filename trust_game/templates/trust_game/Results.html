@@ -1,50 +1,55 @@
-{{ block title }} Résultats {{ endblock }} {{ block content }}
-<div class="card">
-  <div class="card-header bg-success text-white">
-    <h5 class="mb-0">Résultats du jeu</h5>
-  </div>
-  <div class="card-body">
-    <h4>Récapitulatif:</h4>
+{% extends "global/Page.html" %}
+{% block title %} Résultats du jeu {% endblock %}
+{% block content %}
 
-    {% if player.id_in_group == 1 %}
-    <p>Vous êtes le <strong>Joueur A</strong></p>
-    <ul>
-      <li>Vous avez commencé avec {{ C.ENDOWMENT }} jetons</li>
-      <li>Vous avez envoyé {{ sent }} jetons au Joueur B</li>
-      <li>
-        Le Joueur B a reçu {{ tripled }} ({{ sent }} × {{ C.MULTIPLIER }})
-        jetons
-      </li>
-      <li>Le Joueur B vous a renvoyé {{ sent_back }} jetons</li>
-      <li><strong>Votre gain final est de {{ payoff }} jetons </strong></li>
-    </ul>
-    {% else %}
-    <p>Vous êtes le <strong>Joueur B</strong></p>
-    <ul>
-      <li>
-        Vous avez reçu {{ tripled }} ({{ sent }} × {{ C.MULTIPLIER }}) jetons
-      </li>
-      <li>Vous avez renvoyé {{ sent_back }} jetons au Joueur A</li>
-      <li><strong>Votre gain final est de {{ payoff }} jetons </strong></li>
-    </ul>
-    {% endif %}
+<div class="experiment-card results-loading" id="results-container">
 
-    <h4>Conversation:</h4>
-    <div
-      id="final-chat-history"
-      style="
-        height: 200px;
-        overflow-y: auto;
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 10px;
-      "
-    >
-      {{ player.chat_history|safe }} {% if not player.chat_history %}
-      <em>Aucun message échangé.</em>
-      {% endif %}
+  <!-- Skeletons visibles pendant le chargement -->
+  <div class="result-skeleton skeleton skeleton--block"></div>
+  <div class="result-skeleton skeleton skeleton--text"></div>
+  <div class="result-skeleton skeleton skeleton--text skeleton--w70"></div>
+
+  <!-- Lignes de résultats (révélées progressivement par JS) -->
+  {% if player.id_in_group == 1 %}
+  <p class="result-row" id="row-role"><span class="result-row__label">Votre rôle</span><span class="result-row__value">Joueur A</span></p>
+  <p class="result-row" id="row-endowment"><span class="result-row__label">Dotation initiale</span><span class="result-row__value">{{ C.ENDOWMENT }} jetons</span></p>
+  <p class="result-row" id="row-sent"><span class="result-row__label">Envoyé au Joueur B</span><span class="result-row__value">{{ sent }} jeton(s)</span></p>
+  <p class="result-row" id="row-tripled"><span class="result-row__label">Joueur B a reçu (×{{ C.MULTIPLIER }})</span><span class="result-row__value">{{ tripled }} jetons</span></p>
+  <p class="result-row" id="row-back"><span class="result-row__label">Renvoyé par le Joueur B</span><span class="result-row__value">{{ sent_back }} jeton(s)</span></p>
+  <p class="result-row result-row--total" id="row-total"><span class="result-row__label">Votre gain final</span><span class="result-row__value">{{ payoff }} jetons</span></p>
+  {% else %}
+  <p class="result-row" id="row-role"><span class="result-row__label">Votre rôle</span><span class="result-row__value">Joueur B</span></p>
+  <p class="result-row" id="row-tripled"><span class="result-row__label">Reçu du Joueur A (×{{ C.MULTIPLIER }})</span><span class="result-row__value">{{ tripled }} jetons</span></p>
+  <p class="result-row" id="row-back"><span class="result-row__label">Renvoyé au Joueur A</span><span class="result-row__value">{{ sent_back }} jeton(s)</span></p>
+  <p class="result-row result-row--total" id="row-total"><span class="result-row__label">Votre gain final</span><span class="result-row__value">{{ payoff }} jetons</span></p>
+  {% endif %}
+
+  {% if player.chat_history %}
+  <div class="result-row result-row--vertical" id="row-chat">
+    <span class="result-row__label">Conversation</span>
+    <div id="final-chat-history" class="chat-messages chat-history-box">
+      {{ player.chat_history|safe }}
     </div>
   </div>
+  {% endif %}
+
 </div>
 
-{{ next_button }} {{ endblock }}
+{{ next_button }}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const container = document.getElementById('results-container');
+    const rows = container.querySelectorAll('.result-row');
+
+    // Démarrer la révélation progressive après un court délai
+    setTimeout(() => {
+      container.classList.remove('results-loading');
+      rows.forEach((row, i) => {
+        setTimeout(() => row.classList.add('slide-in'), i * 150);
+      });
+    }, 400);
+  });
+</script>
+
+{% endblock %}

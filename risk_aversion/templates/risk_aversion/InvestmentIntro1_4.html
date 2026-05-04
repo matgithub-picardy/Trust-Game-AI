@@ -1,177 +1,76 @@
-{% load static %}
-
-{% block styles %}
-<link rel="stylesheet" href="{% static 'style.css' %}">
-{% endblock %}
-
-{% block title %}
-
-  <h1 class="page-title"> Décision {{ player.confirmed_decision_count }} - Investissez vos jetons </h1>
-
-{% endblock %}
+{% extends "global/Page.html" %}
+{% block title %}Instructions sur les 4 prochaines décisions{% endblock %}
 
 
 {% block content %}
 
-<p><strong style="color: red">Numéro de la décision selon cahier des charges : {{ real_current_decision }}</strong></p>
-
-{{ if player.confirmed_decision_count != 1 }}
-
 <div class="alert-box">
-Le tirage au sort de la décision donnant lieu à votre rémunération finale n’a lieu qu’à la fin de tous les jeux. 
+Le tirage au sort de la décision donnant lieu à votre rémunération finale n'a lieu qu'à la fin de tous les jeux.
 Vous disposez donc toujours à ce stade de vos <strong>{{ player.payoff | to0 }}</strong> initiaux.
 </div>
 
-{{ endif }}
-
-<div class="container">
+<div class="experiment-card">
   <div class="info-card">
     <div class="intro-section">
       <p class="intro-text">
-        Avec <strong class="highlight">{{ C.MAX_INVESTMENT }}</strong> de vos <strong> {{ player.payoff | to0 }}</strong>, vous pouvez :
+        Au cours des 4 prochaines décisions, vous allez devoir choisir le montant que vous souhaitez investir dans un jeu de hasard, en misant entre 0 et <strong class="highlight">{{ C.MAX_INVESTMENT }}</strong> de vos jetons disponibles.
       </p>
 
       <div class="options-list">
-        
-        {{ if real_current_decision == 1 or real_current_decision == 2 }}
-
           <div class="option-item">
-              <div class="option-icon">💰</div>
-              <div class="option-text">conserver les {{ C.MAX_INVESTMENT }} jetons</div>
+              <div class="option-icon"><i class="fa-solid fa-coins" class="icon--rust"></i></div>
+              <div class="option-text">Vous pouvez conserver vos jetons (ou en perdre un montant fixe).</div>
           </div>
           <div class="option-item">
-              <div class="option-icon">🎲</div>
-              <div class="option-text">OU investir tout ou une partie des {{ C.MAX_INVESTMENT }} jetons dans un jeu de hasard</div>
+              <div class="option-icon"><i class="fa-solid fa-dice" class="icon--ink"></i></div>
+              <div class="option-text">OU investir tout ou une partie de ces jetons dans le tirage d'une urne.</div>
           </div>
-
-        {{ else }}
-
-          <div class="option-item">
-              <div class="option-icon">💰</div>
-              <div class="option-text">ne rien faire et perdre les {{ C.MAX_INVESTMENT }} jetons</div>
-          </div>
-          <div class="option-item">
-              <div class="option-icon">🎲</div>
-              <div class="option-text">OU investir tout ou une partie des {{ C.MAX_INVESTMENT }} jetons dans un jeu de hasard</div>
-          </div>
-
-        {{ endif }}
-
       </div>
     </div>
 
     <div class="game-section">
-
-      <h5>🔍 Comment fonctionne le jeu de hasard ?</h5>
+      <h5><i class="fa-solid fa-magnifying-glass" class="icon--ink"></i> Comment fonctionne le jeu de hasard ?</h5>
 
       <p class="game-description">
-
-        Une urne contient <strong>{{ C.BALL_NUMBER }} boules :</strong>
-
-        {{ if real_current_decision == 1 or real_current_decision == 3 }}
-
-          {{ ball_number_per_color }} boules <strong>JAUNES</strong> <span class="ball yellow"></span> et {{ ball_number_per_color }} boules <strong>VIOLETTES</strong> <span class="ball purple"></span>.
-
-        {{ else }}
-
-          des boules <strong>JAUNES</strong> <span class="ball yellow"></span> et/ou des boules <strong>VIOLETTES</strong> <span class="ball purple"></span>.
-
-        {{ endif }}
-      
+        Une urne contient un total de <strong>{{ C.BALL_NUMBER }} boules</strong>, réparties entre <strong>JAUNES</strong> <span class="ball yellow"></span> et <strong>VIOLETTES</strong> <span class="ball purple"></span>.
       </p>
 
       <div class="image-container">
         <img src="https://i.imgur.com/CF4Tl4o.png" width="165">
       </div>
-    
-     {{ if real_current_decision == 1 or real_current_decision == 3 }} 
 
-        <p>⚠️ Avec <strong>autant de boules</strong> de chaque couleur, vous avez donc <strong> 1 chance sur 2 </strong> de tirer chaque couleur.</p>
+      <p>Selon la décision qui vous sera présentée, la répartition des boules variera :</p>
+      <ul>
+        <li>Soit vous <strong>connaîtrez</strong> la répartition : il y aura exactement {{ ball_number_per_color }} boules <span class="ball yellow"></span> et {{ ball_number_per_color }} boules <span class="ball purple"></span> (soit 1 chance sur 2).</li>
+        <li>Soit la répartition sera <strong>inconnue</strong> : le nombre de boules <span class="ball yellow"></span> et <span class="ball purple"></span> sera caché (entre 0 et {{ C.BALL_NUMBER }} chacune).</li>
+      </ul>
 
-     {{ else }} 
+      <p>A chaque décision, la boule <strong>JAUNE</strong> sera favorable à votre investissement, tandis que la boule <strong>VIOLETTE</strong> vous sera défavorable.</p>
 
-        <p>⚠️ Vous ne savez pas combien il y a de boules de chaque couleur dans l'urne. Il peut y avoir entre 0 et {{ C.BALL_NUMBER }} boules <span class="ball yellow"></span> 
-          et entre 0 et {{ C.BALL_NUMBER }} boules <span class="ball purple"></span>.</p>
-
-     {{ endif }}
-
-     <p>On tire au hasard une boule de l'urne. Deux possibilités se présentent à vous :</p>
-
-     {{ if real_current_decision == 1 or real_current_decision == 2 }} 
-
-        <div class="options-list">
-
-          <div class="option-item">
-            <div class="option-icon"><span class="ball yellow"></span></div>
-            <div class="option-text">tirage <strong>JAUNE</strong> : vous <strong>gagnez 3 fois les jetons investis</strong></div>
-          </div>
-
-          <div class="option-item">
-            <div class="option-icon"><span class="ball purple"></span></div>
-            <div class="option-text">tirage <strong>VIOLET</strong> : vous <strong>perdez les jetons investis.</strong></div>
-          </div>
-
+      <div class="options-list">
+        <div class="option-item">
+          <div class="option-icon"><span class="ball yellow"></span></div>
+          <div class="option-text">tirage <strong>JAUNE</strong> : vous <strong>gagnez</strong> (ou récupérez) 3 fois ou 1 fois votre investissement selon la variante.</div>
         </div>
+        <div class="option-item">
+          <div class="option-icon"><span class="ball purple"></span></div>
+          <div class="option-text">tirage <strong>VIOLET</strong> : vous <strong>perdez</strong> votre investissement (ou aggravez la perte).</div>
+        </div>
+      </div>
 
-        <p><strong>💡 Exemple :</strong> Avec <strong>4 jetons</strong> investis (et <strong>6 jetons</strong>  conservés) :</p>
-        <ul>
-          <li><span class="ball yellow"></span> tirage <strong>JAUNE</strong> : vous gagnez 3 x 4 jetons = <strong>12 jetons</strong></li>
+      <p>Prenez le temps de bien lire chaque scénario avant d'investir.</p>
 
-          <ul>
-              <li>Après tirage, vous avez donc 12+6 (jetons conservés) = <strong>18 jetons</strong></li>
-          </ul>
-
-          <li><span class="ball purple"></span> tirage <strong>VIOLET</strong> : vous perdez les 4 jetons investis et ne gagnez donc rien</li>
-
-          <ul>
-              <li>Après tirage, il vous reste donc les <strong>6 jetons conservés</strong></li>
-          </ul>
-        </ul>
-
-    {{ else }}
-
-          <div class="options-list">
-
-            <div class="option-item">
-              <div class="option-icon"><span class="ball yellow"></span></div>
-              <div class="option-text">tirage <strong>JAUNE</strong> : vous <strong>récupérez les jetons investis</strong> et <strong>réduisez</strong> donc votre perte d’autant.</div>
-            </div>
-
-            <div class="option-item">
-              <div class="option-icon"><span class="ball purple"></span></div>
-              <div class="option-text">tirage <strong>VIOLET</strong> : vous perdez <strong>3 fois les jetons investis</strong> (en plus des jetons non investis) et <strong>aggravez</strong> donc votre perte d’autant</div>
-            </div>
-
-          </div>
-
-          <p><strong>💡 Exemple :</strong> Avec 4 jetons investis (et 6 jetons non-investis).</p>
-          <ul>
-            <li><strong><span class="ball yellow"></span> tirage JAUNE :</strong> vous <strong>récupérez</strong> les 4 jetons investis</li>
-
-            <ul>
-                <li>Total perdu: les 6 jetons non-investis (au lieu des 10 jetons initiaux)</li>
-            </ul>
-
-            <li><strong><span class="ball purple"></span> tirage VIOLET :</strong> vous <strong>perdez</strong> 3 x 4 = 12 jetons</li>
-
-            <ul>
-                <li>Total perdu : 12 + 6 (jetons non-investis) = 18 jetons (au lieu des 10 jetons initiaux)</li>
-            </ul>
-          </ul>
-
-    {{ endif }} 
-
-
-  </div>   
+  </div>
 
  </div>
 
  <div class="button-container">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
     {{ next_button }}
  </div>
 
 </div>
 
-{{ include_sibling 'style.html'}} 
+
 
 {% endblock %}

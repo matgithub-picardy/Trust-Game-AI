@@ -1,0 +1,21 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Partie 3 sur 7</span>
+  <h1>Craintes et réserves vis-à-vis de l'IA</h1>
+  <p><em>Même principe : 1 = Pas du tout d'accord ··· 7 = Tout à fait d'accord</em></p>
+
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q13' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q14' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q15' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q16' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q17' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q18' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q19' }}</div>
+
+  <div class="button-container mt-4">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}

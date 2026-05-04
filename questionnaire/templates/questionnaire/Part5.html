@@ -1,0 +1,20 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Partie 5 sur 7</span>
+  <h1>Comportements de réciprocité dans la vie quotidienne</h1>
+  <p><em>Indiquez dans quelle mesure chaque affirmation vous correspond. 1 = Pas du tout d'accord ··· 7 = Tout à fait d'accord</em></p>
+
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q20' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q21' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q22' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q23' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q24' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q25' }}</div>
+
+  <div class="button-container mt-4">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}

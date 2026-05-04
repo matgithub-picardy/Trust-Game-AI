@@ -1,0 +1,78 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Partie 1 sur 7</span>
+  <h1>Votre usage de l'intelligence artificielle</h1>
+  <p><em>Ces questions portent sur votre utilisation habituelle des outils d'IA. Il n'y a pas de bonne ou mauvaise réponse.</em></p>
+
+    {{ formfield 'q1' }}
+
+  <div class="form-group mb-4 q2-group">
+    <label class="col-form-label">Q2. Dans quel(s) contexte(s) utilisez-vous principalement ces outils ? (3 maximum)</label>
+    {{ formfield 'q2_travail' }}
+    {{ formfield 'q2_etudes' }}
+    {{ formfield 'q2_redaction' }}
+    {{ formfield 'q2_recherche' }}
+    {{ formfield 'q2_programmation' }}
+    {{ formfield 'q2_loisirs' }}
+    {{ formfield 'q2_decision' }}
+    {{ formfield 'q2_aucun' }}
+  </div>
+
+    {{ formfield 'q3' }}
+
+    {{ formfield 'q4' }}
+
+  <div class="form-group mb-4 q5-group">
+    <label class="col-form-label">Q5. Parmi les outils suivants, lesquels avez-vous déjà utilisés ? (Plusieurs réponses possibles)</label>
+    {{ formfield 'q5_chatgpt' }}
+    {{ formfield 'q5_copilot' }}
+    {{ formfield 'q5_gemini' }}
+    {{ formfield 'q5_claude' }}
+    {{ formfield 'q5_mistral' }}
+    {{ formfield 'q5_perplexity' }}
+    {{ formfield 'q5_integre' }}
+    {{ formfield 'q5_aucun' }}
+  </div>
+
+  <div class="button-container mt-4">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function limitCheckboxes(groupSelector, maxAllowed) {
+        var group = document.querySelector(groupSelector);
+        if(!group) return;
+        var checkboxes = group.querySelectorAll('input[type="checkbox"]');
+        var aucun = Array.from(checkboxes).find(cb => cb.id.includes('_aucun'));
+        
+        checkboxes.forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                // Handle 'aucun' mutually exclusive logic
+                if (this === aucun && this.checked) {
+                    checkboxes.forEach(c => {
+                        if (c !== aucun) c.checked = false;
+                    });
+                } else if (this !== aucun && this.checked && aucun) {
+                    aucun.checked = false;
+                }
+
+                var checkedCount = Array.from(checkboxes).filter(c => c.checked && c !== aucun).length;
+                if (checkedCount > maxAllowed) {
+                    this.checked = false;
+                    if(window.showToast) window.showToast('Vous ne pouvez sélectionner que ' + maxAllowed + ' réponses maximum.', 'warning');
+                }
+            });
+        });
+    }
+
+    limitCheckboxes('.q2-group', 3);
+    limitCheckboxes('.q5-group', 99); // No limit specified for Q5, just mutual exclusivity for 'aucun'
+});
+</script>
+{% endblock %}

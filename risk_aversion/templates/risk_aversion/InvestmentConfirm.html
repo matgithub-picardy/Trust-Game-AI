@@ -1,11 +1,16 @@
+{% extends "global/Page.html" %}
 {% block title %} Investissez vos jetons - Décision {{ player.confirmed_decision_count }} {% endblock %}
 
 {% block content %}
+<div class="experiment-card">
 
-<p><strong style="color: red">Numéro de la décision selon cahier des charges : {{ real_current_decision }}</strong></p>
-<p>✅ Votre décision a bien été enregistrée</p>
-<p>⚠️ Elle pourra être tirée au sort à la fin de cette étape pour déterminer vos gains.</p>
+<span class="eyebrow">Décision n°{{ real_current_decision }}</span>
+<p><i class="fa-solid fa-check icon--success"></i> Votre décision a bien été enregistrée</p>
+<p><i class="fa-solid fa-triangle-exclamation icon--rust"></i> Elle pourra être tirée au sort à la fin de cette étape pour déterminer vos gains.</p>
 
-{{ next_button }}
+<div class="button-container">
+  {{ next_button }}
+</div>
 
+</div>
 {% endblock %}
