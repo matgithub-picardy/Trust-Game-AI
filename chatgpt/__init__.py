@@ -57,11 +57,14 @@ def chat_with_gpt(player: Player, data):
 
     history += f"\n{C.USER_PREFIX}{user_message}"
 
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=messages_list,
-    )
-    bot_reply = response.choices[0].message.content
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages_list,
+        )
+        bot_reply = response.choices[0].message.content
+    except Exception:
+        return {player.id_in_group: {"type": "gpt_error", "message": "Le service IA est temporairement indisponible."}}
 
     history += f"\n{C.BOT_PREFIX}{bot_reply}"
     player.gpt_history = history

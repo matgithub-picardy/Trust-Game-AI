@@ -1,9 +1,132 @@
-{{ extends "otree/Page.html" }}
-{% block continue_button_text %}
-Suivant
+{% extends "otree/Page.html" %}
+{% load otree %}
+
+
+{% block global_styles %}
+<!-- Font Awesome CDN — Icônes professionnelles -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVJkEZSMUkrQ6usKu8zTg6oj+Am+aME+aCEQ7ry2+zchyQOxJ3ybVHN3ub8DA7cQPvtQoEvFepA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Google Fonts CDN — Rouille & Parchemin -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Mono:wght@400;500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'style.css' %}">
 {% endblock %}
-{{ block global_styles  }}
-{{ endblock }}
-{{ load otree }}
-{{ block global_scripts  }}
-{{ endblock }}
+
+{% block global_scripts %}
+<div id="toast-container"></div>
+
+<script>
+/* ── Header + progression Rouille & Parchemin ── */
+(function() {
+  const STEPS = ['Questionnaire','Risque','Jeu','Résultats'];
+  const stepMap = {
+    'questionnaire': 1,
+    'risk_aversion': 2,
+    'tg':            3,
+    'results':       4,
+  };
+  const TOTAL = 4;
+  const path = window.location.pathname;
+  let stepNum = null;
+  for (const [key, val] of Object.entries(stepMap)) {
+    if (path.includes('/' + key + '/') || path.includes('/' + key)) {
+      stepNum = val; break;
+    }
+  }
+  if (!stepNum) return;
+
+  const label = STEPS[stepNum - 1];
+
+  document.addEventListener('DOMContentLoaded', function() {
+    /* ── Header ── */
+    const header = document.createElement('div');
+    header.className = 'page-header';
+    header.innerHTML =
+      '<span class="page-header__logo">Jeu de confiance</span>' +
+      '<div class="page-header__badges">' +
+        '<span class="badge badge--step">' + stepNum + '/' + TOTAL + '</span>' +
+      '</div>';
+      
+    const stepNumBg = document.createElement('span');
+    stepNumBg.className = 'page-header__step-num';
+    stepNumBg.textContent = String(stepNum).padStart(2,'0');
+
+    /* ── Progress ticks (mobile) ── */
+    const ticksHtml = Array.from({length: TOTAL}, function(_,i) {
+      var cls = (i + 1 < stepNum) ? 'progress-tick done'
+              : (i + 1 === stepNum) ? 'progress-tick current'
+              : 'progress-tick';
+      return '<div class="' + cls + '"></div>';
+    }).join('');
+
+    const ticks = document.createElement('div');
+    ticks.className = 'progress-ticks';
+    ticks.innerHTML = ticksHtml;
+
+    /* ── Stepper (desktop) ── */
+    const stepperHtml = STEPS.map(function(lbl, i) {
+      var s = i + 1;
+      var cls = s < stepNum ? 'stepper-step done'
+              : s === stepNum ? 'stepper-step current'
+              : 'stepper-step';
+      return '<div class="' + cls + '">' +
+        '<div class="stepper-dot"></div>' +
+        '<div class="stepper-label">' + lbl + '</div>' +
+      '</div>';
+    }).join('');
+
+    const stepper = document.createElement('nav');
+    stepper.className = 'progress-stepper';
+    stepper.setAttribute('aria-label', 'Progression');
+    stepper.innerHTML = stepperHtml;
+
+    /* ── Injection avant le contenu oTree ── */
+    const body = document.body;
+    body.insertBefore(stepNumBg, body.firstChild);
+    body.insertBefore(stepper, body.firstChild);
+    body.insertBefore(ticks,  body.firstChild);
+    body.insertBefore(header, body.firstChild);
+
+    /* ── Skeleton au submit ── */
+    document.querySelectorAll('form').forEach(function(form) {
+      form.addEventListener('submit', function() {
+        var content = document.querySelector('.page-content, #otree-content');
+        if (content) content.classList.add('skeleton-active');
+      });
+    });
+  });
+})();
+
+/* ── Toast API globale ── */
+window.showToast = function(message, type) {
+  type = type || 'info';
+  var container = document.getElementById('toast-container');
+  if (!container) return;
+  var t = document.createElement('div');
+  t.className = 'toast toast--' + type;
+  t.textContent = message;
+  container.appendChild(t);
+  setTimeout(function() { t.remove(); }, 4000);
+};
+</script>
+<script>
+// Inject labels for range inputs: wrap each range in .range-wrapper and add min/max labels
+(function(){
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('input[type="range"]').forEach(function(range){
+      if (range.closest('.range-wrapper')) return;
+      var minVal = range.getAttribute('min') || '0';
+      var maxVal = range.getAttribute('max') || '10';
+      var wrapper = document.createElement('div'); wrapper.className = 'range-wrapper';
+      range.parentNode.insertBefore(wrapper, range);
+      wrapper.appendChild(range);
+      var labels = document.createElement('div'); labels.className = 'range-labels';
+      var left = document.createElement('span'); left.className = 'range-label-left'; left.textContent = minVal;
+      var right = document.createElement('span'); right.className = 'range-label-right'; right.textContent = maxVal;
+      labels.appendChild(left); labels.appendChild(right);
+      wrapper.appendChild(labels);
+    });
+  });
+})();
+</script>
+{% endblock %}

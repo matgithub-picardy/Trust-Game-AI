@@ -1,43 +1,48 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{% block title %}Chat avec l'IA{% endblock %}
 {% block content %}
 
-<div
-  id="chatgpt-box"
-  style="
-    white-space: pre-line;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 1em;
-    height: 300px;
-    overflow-y: auto;
-  "
->
-  {{ gpt_history }}
+<div class="chat-section">
+  <div class="chat-panel active">
+    <div id="chatgpt-box" class="chat-messages"></div>
+
+    <div id="gpt-thinking" class="gpt-thinking">
+      <div class="chat-bubble chat-bubble--gpt">
+        <i class="fa-solid fa-ellipsis fa-beat-fade"></i> GPT réfléchit…
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <input id="user-gpt-input" type="text" placeholder="Écris ton message…" autocomplete="off" />
+      <button id="send-gpt-button" class="btn-send" type="button">Envoyer</button>
+    </div>
+  </div>
 </div>
-
-<input
-  id="user-gpt-input"
-  type="text"
-  placeholder="Écris ton message..."
-  autocomplete="off"
-  style="width: 80%"
-/>
-<button id="send-gpt-button">Envoyer</button>
-
-{{ next_button }}
 
 <script>
   const input = document.getElementById("user-gpt-input");
   const button = document.getElementById("send-gpt-button");
   const chatBox = document.getElementById("chatgpt-box");
+  const thinkingEl = document.getElementById("gpt-thinking");
 
-  button.onclick = function () {
-    event.preventDefault(); // empêche le submit
+  function addBubble(text, cls) {
+    const bubble = document.createElement("div");
+    bubble.className = "chat-bubble " + cls;
+    bubble.textContent = text;
+    chatBox.appendChild(bubble);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  button.onclick = function (event) {
+    event.preventDefault();
 
     const message = input.value.trim();
     if (!message) return;
 
-    chatBox.textContent += `\n{{C.USER_PREFIX}}${message}`;
-    chatBox.scrollTop = chatBox.scrollHeight;
+    addBubble(message, "chat-bubble--self");
+    thinkingEl.style.display = "block";
 
     liveSend({ message: message });
 
@@ -45,15 +50,16 @@
     input.focus();
   };
 
-  // appelée quand le serveur envoie un message via live_method
   liveRecv = function (data) {
-    const reply = data.reply;
+    thinkingEl.style.display = "none";
 
-    chatBox.textContent += `\n{{C.BOT_PREFIX}}${reply}`;
-    chatBox.scrollTop = chatBox.scrollHeight;
+    if (data.type === "gpt_error") {
+      addBubble(data.message, "chat-bubble--gpt");
+    } else {
+      addBubble(data.reply, "chat-bubble--gpt");
+    }
   };
 
-  // envoyer en appuyant sur Entrée
   input.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       button.click();

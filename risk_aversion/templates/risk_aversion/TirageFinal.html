@@ -1,10 +1,12 @@
-{{ block title }} Tirage Final {{ endblock }} 
+{% extends "global/Page.html" %}
+{% block title %} Tirage Final {% endblock %}
 
-{{ block content }}
-
-<p>Parmi toutes vos décisions, une sera séléctionnée aléatoirement.</p>
-<p>Nous vous donnerons le résultat à la fin de l'expérience.</p>
-
-{{ next_button }} 
-
-{{ endblock }}
+{% block content %}
+<div class="experiment-card">
+  <p>Parmi toutes vos décisions, une sera sélectionnée aléatoirement.</p>
+  <p>Nous vous donnerons le résultat à la fin de l'expérience.</p>
+  <div class="button-container">
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}

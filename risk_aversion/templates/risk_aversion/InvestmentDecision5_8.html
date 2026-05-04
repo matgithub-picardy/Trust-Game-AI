@@ -1,14 +1,11 @@
-{% load static %}
+{% extends "global/Page.html" %}
 
-{% block styles %}
-<link rel="stylesheet" href="{% static 'style.css' %}">
 
-{% endblock %}
-
-{{ block title }} Investissez vos jetons – Décision {{ player.confirmed_decision_count }} {{ endblock }} 
+{% block title %} Investissez vos jetons – Décision {{ player.confirmed_decision_count }} {% endblock %} 
 {% block content %}
+<div class="experiment-card">
 
-<p><strong style="color: red">Numéro de la décision selon cahier des charges : {{ real_current_decision }}</strong></p>
+<span class="eyebrow">Décision n°{{ real_current_decision }}</span>
 
 <div class="alert-box">
 La décision donnant lieu à votre rémunération finale n’étant tirée au sort parmi toutes vos décisions qu’à la fin de la première partie, 
@@ -23,13 +20,13 @@ vous disposez donc toujours à ce stade de vos <strong>{{ player.payoff | to0 }}
     La couleur tirée détermine le nombre de jetons que vous gagnez.
   </p>
   <ul>
-    {{ for li in li_items }}
+    {% for li in li_items %}
     <li>{{ li }}</li>
-    {{ endfor }}
+    {% endfor %}
   </ul>
   <p><strong>Choisissez votre tirage préféré :</strong></p>
   
-  <table>
+  <table class="rp-table">
     <thead>
       <tr>
         <th>Option</th>
@@ -44,32 +41,50 @@ vous disposez donc toujours à ce stade de vos <strong>{{ player.payoff | to0 }}
         <td>{{ letter }}</td>
         <td>{{ box }}</td>
         <td>{{ result }}</td>
-        <td><input type="radio" name="inv{{ real_current_decision }}" value="{{ letter }}"></td>
+        <td><input type="radio" name="{{ field_name }}" value="{{ letter }}"></td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
 <div class="button-container">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
     {% block next_button %}
       <button class="otree-btn-next btn btn-primary">Validez votre choix</button>
     {% endblock %}
 </div>
 
-{{ include_sibling 'style.html'}} 
+<script>
+(function() {
+  var STORAGE_KEY = 'ra_{{ participant.code }}_dec_' + '{{ field_name }}';
 
-<style>
-  
-    table, th, td {
-        text-align: center;
-        vertical-align: middle;
-        border: 1px solid black;
+  document.addEventListener('DOMContentLoaded', function() {
+    // Restauration depuis localStorage
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      var radio = document.querySelector('input[name="{{ field_name }}"][value="' + saved + '"]');
+      if (radio) radio.checked = true;
     }
 
-    th,td {
-      padding: 5px 8px;
-    }
+    // Sauvegarde à chaque changement
+    document.querySelectorAll('input[name="{{ field_name }}"]').forEach(function(r) {
+      r.addEventListener('change', function() {
+        localStorage.setItem(STORAGE_KEY, this.value);
+      });
+    });
 
-  </style>
-  
+    // Sauvegarde au submit
+    var form = document.querySelector('form');
+    if (form) form.addEventListener('submit', function() {
+      var checked = document.querySelector('input[name="{{ field_name }}"]:checked');
+      if (checked) localStorage.setItem(STORAGE_KEY, checked.value);
+    });
+  });
+})();
+</script>
+
+
+
+
+</div>
 {% endblock %}

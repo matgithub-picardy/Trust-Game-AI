@@ -2,9 +2,10 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
+*.md
+!README.md
 *.sqlite3
-
+docs
 # Ignorer environnements virtuels
 .venv/
 venv/
@@ -24,3 +25,11 @@ commit_message.txt
 config.json
 
 urne.psd
+
+# Outils de développement
+.superpowers/
+.claude/
+_static/style.css.bak
+docs/
+
+.gitignore
