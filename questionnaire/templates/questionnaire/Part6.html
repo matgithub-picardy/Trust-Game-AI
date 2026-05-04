@@ -1,0 +1,20 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Partie 6 sur 7</span>
+  <h1>Confiance interpersonnelle générale</h1>
+  <p><em>Ces questions portent sur votre vision générale des relations entre les personnes. 1 = Pas du tout d'accord ··· 7 = Tout à fait d'accord</em></p>
+
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q26' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q27' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q28' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q29' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q30' }}</div>
+  <div class="likert-group likert-graduated mb-4">{{ formfield 'q31' }}</div>
+
+  <div class="button-container mt-4">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}

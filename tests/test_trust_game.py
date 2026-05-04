@@ -9,8 +9,8 @@ from trust_game import (
 )
 
 
-# id = 1 pour joueur A, 2 pour joueur B
 def mock_player(id_in_group: int):
+    """Génère un objet Player simulé (mock) avec un ID spécifique dans le groupe."""
     player = MagicMock()
     player.id_in_group = id_in_group
     player.chat_history = ""
@@ -18,6 +18,7 @@ def mock_player(id_in_group: int):
 
 
 def mock_player_set_chat_options(id_in_session: int, nb_participants: int):
+    """Génère un objet Player simulé pour tester la configuration du chat."""
     player = MagicMock()
     player.participant.id_in_session = id_in_session
     player.session.get_participants.return_value = [
@@ -27,7 +28,7 @@ def mock_player_set_chat_options(id_in_session: int, nb_participants: int):
 
 
 def mock_group() -> list:
-    # création de deux joueurs mockés
+    """Simule un groupe de deux joueurs (A et B) liés l'un à l'autre."""
     player_A = mock_player(1)
     player_B = mock_player(2)
 
@@ -40,7 +41,6 @@ def mock_group() -> list:
     return group.get_players()
 
 
-# paramètres de test_set_chat_options
 @pytest.mark.parametrize(
     "i, expected_behavior, expected_cheap_talk",
     [
@@ -63,6 +63,7 @@ def mock_group() -> list:
     ],
 )
 def test_set_chat_options(i, expected_behavior, expected_cheap_talk):
+    """Vérifie que le comportement GPT et le mode cheap talk sont correctement attribués par rotation."""
     player = mock_player_set_chat_options(i, 16)
     set_chat_options(player)
     assert player.participant.id_in_session == i
@@ -71,6 +72,7 @@ def test_set_chat_options(i, expected_behavior, expected_cheap_talk):
 
 
 def test_handle_chat_message():
+    """Teste l'envoi de messages entre joueurs et la mise à jour de l'historique partagé."""
     players = mock_group()
     player_A = players[0]
     player_B = players[1]
@@ -78,8 +80,8 @@ def test_handle_chat_message():
     data_1 = {"message": "Ceci est un message"}
     expected_message_1 = "<strong>Joueur A:</strong> Ceci est un message<br>"
     expected_result_1 = {
-        1: {"new_message": expected_message_1},
-        2: {"new_message": expected_message_1},
+        1: {"new_message": expected_message_1, "sender_id": 1},
+        2: {"new_message": expected_message_1, "sender_id": 1},
     }
 
     result = handle_chat_message(player_A, data_1)
@@ -103,6 +105,7 @@ def test_handle_chat_message():
 
 
 def test_handle_chat_message_but_no_msg():
+    """Vérifie que le système ignore les données ne contenant pas de message valide."""
     players = mock_group()
     player_A = players[0]
     data = {"toto": "titi"}
@@ -112,6 +115,7 @@ def test_handle_chat_message_but_no_msg():
 
 
 def test_handle_typing_status():
+    """Teste la transmission de l'état 'en cours de saisie' au partenaire."""
     players = mock_group()
     player_A = players[0]
     player_B = players[1]
@@ -126,6 +130,7 @@ def test_handle_typing_status():
 
 
 def test_handle_amount_sent():
+    """Teste le transfert de jetons par le Joueur A."""
     players = mock_group()
     player_A = players[0]
 
@@ -146,6 +151,7 @@ def test_handle_amount_sent():
 
 
 def test_handle_amount_sent_invalid_amounts():
+    """Vérifie le rejet des montants d'envoi invalides."""
     players = mock_group()
     player_A = players[0]
 
@@ -159,6 +165,7 @@ def test_handle_amount_sent_invalid_amounts():
 
 
 def test_handle_amount_sent_back():
+    """Teste le renvoi de jetons par le Joueur B."""
     players = mock_group()
     player_B = players[1]
     player_B.group.amount_sent = 9
@@ -186,6 +193,7 @@ def test_handle_amount_sent_back():
 
 
 def test_handle_amount_sent_back_invalid_amounts():
+    """Vérifie le rejet des montants de renvoi invalides."""
     players = mock_group()
     player_B = players[1]
 

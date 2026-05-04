@@ -1,45 +1,55 @@
-{% extends "global/Page.html" %} {% block content %}
+{% extends "global/Page.html" %}
 
-<h2>Quiz de compréhension</h2>
+{% block title %}Quiz de compréhension{% endblock %}
 
-<p>
-  Veuillez répondre aux questions suivantes pour vérifier que vous avez bien
-  compris le fonctionnement du jeu.
-</p>
+{% block content %}
+<div class="experiment-card">
 
-<p><strong>Question 1</strong></p>
-<p>
-  Si le joueur A envoie {{ x }} jetons au joueur B, combien de jetons le joueur
-  B reçoit-il ?
-</p>
-{{ formfield player.q1_b_receive}}
+  <span class="eyebrow">Vérification</span>
+  <h1>Quiz de compréhension</h1>
 
-<p><strong>Question 2</strong></p>
-<p>
-  Le joueur B reçoit {{ y }} jetons et renvoie {{ z }} jetons. Combien le joueur
-  A reçoit-il ?
-</p>
-{{ formfield player.q2_a_get_back }}
+  <p>Veuillez répondre aux questions suivantes pour vérifier que vous avez bien
+    compris le fonctionnement du jeu.</p>
 
-<p><strong>Question 3</strong></p>
-<p>
-  Le joueur A envoie 4 jetons → le joueur B reçoit 12 jetons → le joueur B
-  renvoie 2 jetons.
-</p>
-<ul>
-  <li>Combien de jetons le joueur A a-t-il à la fin ?</li>
-  {{ formfield player.q3_a_final }}
-  <li>Combien de jetons le joueur B a-t-il à la fin ?</li>
-  {{ formfield player.q3_b_final }}
-</ul>
+  <div class="decision-card">
+    <h5><strong>Question 1</strong></h5>
+    <p>Si le joueur A envoie {{ x }} jetons au joueur B, combien de jetons le joueur
+      B reçoit-il ?</p>
+    {{ formfield player.q1_b_receive }}
+  </div>
 
-<p><strong>Question 4</strong></p>
-<p>
-  Vrai ou faux : Si le joueur B vous renvoie des jetons, ce montant est triplé
-  comme le montant que vous lui avez envoyé.
-</p>
-{{ formfield player.q4_true_false }}
+  <div class="decision-card">
+    <h5><strong>Question 2</strong></h5>
+    <p>Le joueur B reçoit {{ y }} jetons et renvoie {{ z }} jetons. Combien le joueur
+      A reçoit-il ?</p>
+    {{ formfield player.q2_a_get_back }}
+  </div>
 
-{{ next_button }}
+  <div class="decision-card">
+    <h5><strong>Question 3</strong></h5>
+    <p>Le joueur A envoie 4 jetons → le joueur B reçoit 12 jetons → le joueur B
+      renvoie 2 jetons.</p>
+    <ul class="steps-list">
+      <li>Combien de jetons le joueur A a-t-il à la fin ?</li>
+    </ul>
+    {{ formfield player.q3_a_final }}
+    <ul class="steps-list">
+      <li>Combien de jetons le joueur B a-t-il à la fin ?</li>
+    </ul>
+    {{ formfield player.q3_b_final }}
+  </div>
 
+  <div class="decision-card">
+    <h5><strong>Question 4</strong></h5>
+    <p>Vrai ou faux : Si le joueur B vous renvoie des jetons, ce montant est triplé
+      comme le montant que vous lui avez envoyé.</p>
+    {{ formfield player.q4_true_false }}
+  </div>
+
+  <div class="button-container">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+
+</div>
 {% endblock %}

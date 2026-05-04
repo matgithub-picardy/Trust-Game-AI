@@ -1,0 +1,88 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Partie 7 sur 7</span>
+  <h1>Informations personnelles</h1>
+  <p><em>Ces informations sont anonymisées et utilisées uniquement à des fins statistiques.</em></p>
+
+  {{ formfield 'q32' }}
+  {{ formfield 'q33' }}
+  {{ formfield 'q34' }}
+  {{ formfield 'q35' }}
+
+  <div id="q35_autre_container" style="display: none;">
+    {{ formfield 'q35_autre' }}
+  </div>
+
+  {{ formfield 'q36' }}
+  {{ formfield 'q37' }}
+  {{ formfield 'q38' }}
+  {{ formfield 'q39' }}
+  {{ formfield 'q40' }}
+
+  <div class="button-container mt-4">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<datalist id="pays-list">
+  <option value="Afghanistan"><option value="Afrique du Sud"><option value="Albanie"><option value="Algérie"><option value="Allemagne"><option value="Andorre"><option value="Angola"><option value="Antigua-et-Barbuda"><option value="Arabie saoudite"><option value="Argentine"><option value="Arménie"><option value="Australie"><option value="Autriche"><option value="Azerbaïdjan">
+  <option value="Bahamas"><option value="Bahreïn"><option value="Bangladesh"><option value="Barbade"><option value="Belgique"><option value="Belize"><option value="Bénin"><option value="Bhoutan"><option value="Biélorussie"><option value="Birmanie"><option value="Bolivie"><option value="Bosnie-Herzégovine"><option value="Botswana"><option value="Brésil"><option value="Brunei"><option value="Bulgarie"><option value="Burkina Faso"><option value="Burundi">
+  <option value="Cambodge"><option value="Cameroun"><option value="Canada"><option value="Cap-Vert"><option value="Chili"><option value="Chine"><option value="Chypre"><option value="Colombie"><option value="Comores"><option value="Congo"><option value="Corée du Nord"><option value="Corée du Sud"><option value="Costa Rica"><option value="Côte d'Ivoire"><option value="Croatie"><option value="Cuba">
+  <option value="Danemark"><option value="Djibouti"><option value="Dominique">
+  <option value="Égypte"><option value="Émirats arabes unis"><option value="Équateur"><option value="Érythrée"><option value="Espagne"><option value="Estonie"><option value="Eswatini"><option value="États-Unis"><option value="Éthiopie">
+  <option value="Fidji"><option value="Finlande"><option value="France">
+  <option value="Gabon"><option value="Gambie"><option value="Géorgie"><option value="Ghana"><option value="Grèce"><option value="Grenade"><option value="Guatemala"><option value="Guinée"><option value="Guinée-Bissau"><option value="Guinée équatoriale"><option value="Guyana">
+  <option value="Haïti"><option value="Honduras"><option value="Hongrie">
+  <option value="Îles Marshall"><option value="Îles Salomon"><option value="Inde"><option value="Indonésie"><option value="Irak"><option value="Iran"><option value="Irlande"><option value="Islande"><option value="Israël"><option value="Italie">
+  <option value="Jamaïque"><option value="Japon"><option value="Jordanie">
+  <option value="Kazakhstan"><option value="Kenya"><option value="Kirghizistan"><option value="Kiribati"><option value="Kosovo"><option value="Koweït">
+  <option value="Laos"><option value="Lesotho"><option value="Lettonie"><option value="Liban"><option value="Libéria"><option value="Libye"><option value="Liechtenstein"><option value="Lituanie"><option value="Luxembourg">
+  <option value="Macédoine du Nord"><option value="Madagascar"><option value="Malaisie"><option value="Malawi"><option value="Maldives"><option value="Mali"><option value="Malte"><option value="Maroc"><option value="Maurice"><option value="Mauritanie"><option value="Mexique"><option value="Micronésie"><option value="Moldavie"><option value="Monaco"><option value="Mongolie"><option value="Monténégro"><option value="Mozambique">
+  <option value="Namibie"><option value="Nauru"><option value="Népal"><option value="Nicaragua"><option value="Niger"><option value="Nigéria"><option value="Norvège"><option value="Nouvelle-Zélande">
+  <option value="Oman"><option value="Ouganda"><option value="Ouzbékistan">
+  <option value="Pakistan"><option value="Palaos"><option value="Palestine"><option value="Panama"><option value="Papouasie-Nouvelle-Guinée"><option value="Paraguay"><option value="Pays-Bas"><option value="Pérou"><option value="Philippines"><option value="Pologne"><option value="Portugal">
+  <option value="Qatar">
+  <option value="République centrafricaine"><option value="République démocratique du Congo"><option value="République dominicaine"><option value="République tchèque"><option value="Roumanie"><option value="Royaume-Uni"><option value="Russie"><option value="Rwanda">
+  <option value="Saint-Christophe-et-Niévès"><option value="Saint-Marin"><option value="Saint-Vincent-et-les-Grenadines"><option value="Sainte-Lucie"><option value="Salvador"><option value="Samoa"><option value="Sao Tomé-et-Principe"><option value="Sénégal"><option value="Serbie"><option value="Seychelles"><option value="Sierra Leone"><option value="Singapour"><option value="Slovaquie"><option value="Slovénie"><option value="Somalie"><option value="Soudan"><option value="Soudan du Sud"><option value="Sri Lanka"><option value="Suède"><option value="Suisse"><option value="Suriname"><option value="Syrie">
+  <option value="Tadjikistan"><option value="Taïwan"><option value="Tanzanie"><option value="Tchad"><option value="Thaïlande"><option value="Timor oriental"><option value="Togo"><option value="Tonga"><option value="Trinité-et-Tobago"><option value="Tunisie"><option value="Turkménistan"><option value="Turquie"><option value="Tuvalu">
+  <option value="Ukraine"><option value="Uruguay">
+  <option value="Vanuatu"><option value="Vatican"><option value="Venezuela"><option value="Viêt Nam">
+  <option value="Yémen">
+  <option value="Zambie"><option value="Zimbabwe">
+</datalist>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    /* ── Autocomplétion des pays (Q38) ── */
+    var q38_input = document.querySelector('input[name="q38"]');
+    if (q38_input) {
+      q38_input.setAttribute('list', 'pays-list');
+      q38_input.setAttribute('autocomplete', 'off');
+      q38_input.setAttribute('placeholder', 'Commencez à taper le nom du pays…');
+    }
+
+    /* ── Toggle du champ "Autre domaine" (Q35) ── */
+    var q35_inputs = document.querySelectorAll('input[name="q35"]');
+    var autre_container = document.getElementById("q35_autre_container");
+
+    function toggleAutre() {
+      var selected = document.querySelector('input[name="q35"]:checked');
+      // L'option 7 est "Autre"
+      if(selected && selected.value === "7") {
+        autre_container.style.display = "block";
+      } else {
+        autre_container.style.display = "none";
+      }
+    }
+
+    q35_inputs.forEach(function(input) {
+      input.addEventListener('change', toggleAutre);
+    });
+
+    toggleAutre(); // init
+  });
+</script>
+{% endblock %}

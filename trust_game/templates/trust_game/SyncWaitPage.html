@@ -1,10 +1,12 @@
-{{ block title }} En attente de votre partenaire {{ endblock }} {{ block content
-}}
-<div class="alert alert-info">
-  <h4>Vous avez réussi le quiz !</h4>
-  <p>En attente que l'autre joueur termine le quiz...</p>
-  <div class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Chargement...</span>
+{% extends "global/Page.html" %}
+{% block title %}En attente de votre partenaire{% endblock %}
+{% block content %}
+<div class="wait-page">
+  <div class="wait-page__icon">⟳</div>
+  <p class="wait-page__title">En attente de votre partenaire…</p>
+  <div class="dots-loader" aria-label="Chargement">
+    <span></span><span></span><span></span>
   </div>
+  <p class="wait-page__hint">Cette page se mettra à jour automatiquement.<br>L'expérimentateur est disponible si vous avez besoin d'aide.</p>
 </div>
-{{ endblock }}
+{% endblock %}

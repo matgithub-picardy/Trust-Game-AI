@@ -1,73 +1,56 @@
-{% extends "global/Page.html" %} 
+{% extends "global/Page.html" %}
 
-{% load static %}
-
-{% block styles %}
-<link rel="stylesheet" href="{% static 'style.css' %}">
-{% endblock %}
-
-{% block title %}
-
-  <h1 class="page-title">Bienvenue !</h1>
-
-{% endblock %}
+{% block title %}Bienvenue{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 800px; margin: 0 auto">
-  <div class="card">
-    <div class="card-header bg-primary text-white">
-      <h2 class="mb-0">Bienvenue !</h2>
-    </div>
-    <div class="card-body">
-      <h4 class="text-primary mb-4">Bienvenue dans cette expérimentation.</h4>
+<div class="experiment-card">
 
-      <p class="lead">
-        Merci d'avoir accepté d'y participer. Avant de commencer, nous vous
-        invitons à lire attentivement les instructions qui suivent.
-      </p>
+  <span class="eyebrow">Expérimentation</span>
+  <h1>Bienvenue dans cette expérimentation.</h1>
 
-      <p>
-        L'expérimentation se déroulera sur <strong>3 étapes</strong> avec un
-        questionnaire et une série de jeux de décision. Aucune connaissance en
-        économie n'est requise.
-      </p>
+  <p>
+    Merci d'avoir accepté d'y participer. Avant de commencer, nous vous
+    invitons à lire attentivement les instructions qui suivent.
+  </p>
 
-      <div class="alert alert-info">
-        <p><strong>⏳ L'expérimentation dure environ 45 min.</strong></p>
-      </div>
+  <p>
+    L'expérimentation se déroulera sur <strong>3 étapes</strong> avec un
+    questionnaire et une série de jeux de décision. Aucune connaissance en
+    économie n'est requise.
+  </p>
 
-      <div class="alert-box">
-        <p>
-          <strong>Votre concentration est essentielle</strong> pour garantir la validité de l'expérimentation. Vous ne devez pas communiquer avec vos camarades présents et les notifications de votre ordinateur ou de votre téléphone seront désactivées le temps de l'expérimentation. </p>
-      </div>
-
-      <p>
-        Vous pouvez poser des questions à tout moment à l'équipe encadrante. 
-      </p>
-
-      <p>
-        Vos réponses sont <strong>anonymes</strong> et ne seront utilisées qu'à
-        des fins de recherche. Une seule participation est autorisé par personne.
-      </p>
-
-      <div class="alert alert-success">
-        <p>
-          <strong>💬 Lisez bien chaque instruction avant toute décision.</strong>
-        </p>
-      </div>
-
-      <p class="text-center mt-4">
-        Cliquez sur "Commencer" pour démarrer l'expérience.
-      </p>
-    </div>
+  <div class="alert-box">
+    <p><strong>⏳ L'expérimentation dure environ 45 min.</strong></p>
   </div>
 
-  <div class="text-center mt-4">
+  <div class="alert-box">
+    <p>
+      <strong>Votre concentration est essentielle</strong> pour garantir la validité de l'expérimentation.
+      Vous ne devez pas communiquer avec vos camarades présents et les notifications de votre
+      ordinateur ou de votre téléphone seront désactivées le temps de l'expérimentation.
+    </p>
+  </div>
+
+  <p>
+    Vous pouvez poser des questions à tout moment à l'équipe encadrante.
+  </p>
+
+  <p>
+    Vos réponses sont <strong>anonymes</strong> et ne seront utilisées qu'à
+    des fins de recherche. Une seule participation est autorisée par personne.
+  </p>
+
+  <div class="alert-box">
+    <p>💬 <strong>Lisez bien chaque instruction avant toute décision.</strong></p>
+  </div>
+
+  <p>Cliquez sur « Commencer » pour démarrer l'expérience.</p>
+
+  <div class="button-container">
     <form method="post">
-      <button class="btn btn-success btn-lg" type="submit">
-        <strong>Commencer</strong>
-      </button>
+      <button class="btn btn-primary" type="submit">Commencer</button>
     </form>
   </div>
+
 </div>
 {% endblock %}

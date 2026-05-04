@@ -1,16 +1,13 @@
-{{ block title }}
-    Connexion
-{{ endblock }}
-
-{{ block content }}
-    <div class="card">
-        <div class="card-body">
-            <h3>Bienvenue dans notre questionnaire</h3>
-            <p>Veuillez vous identifier pour commencer.</p>
-            
-            {{ formfields }}
-            
-            {{ next_button }}
-        </div>
-    </div>
-{{ endblock }}
+{% extends "global/Page.html" %}
+{% block title %}Connexion{% endblock %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Identification</span>
+  <h1>Bienvenue dans notre questionnaire</h1>
+  <p>Veuillez vous identifier pour commencer.</p>
+  {{ formfields }}
+  <div class="button-container">
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}

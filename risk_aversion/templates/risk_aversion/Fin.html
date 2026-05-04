@@ -1,9 +1,11 @@
-{{ block title }} FIN {{ endblock }} 
+{% extends "global/Page.html" %}
+{% block title %} FIN {% endblock %}
 
-{{ block content }}
-
-Cette étape est finie, cliquez sur suivant pour passer à la suite.
-
-{{ next_button }} 
-
-{{ endblock }}
+{% block content %}
+<div class="experiment-card">
+  <p>Cette étape est finie, cliquez sur suivant pour passer à la suite.</p>
+  <div class="button-container">
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}
