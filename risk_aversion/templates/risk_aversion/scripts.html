@@ -1,8 +1,6 @@
 <script>
   current_decision = parseInt("{{real_current_decision}}");
-  const selectInput = document.querySelector(
-    "select[name=inv" + current_decision + "]"
-  );
+  const selectInput = document.querySelector('input[name="{{ field_name }}"]') || document.querySelector("select[name={{ field_name }}]");
   const max_investment = parseFloat("{{C.MAX_INVESTMENT }}");
   const kept = document.getElementById("kept");
   const gains_if_yellow = document.getElementById("gains_if_yellow");
@@ -92,6 +90,8 @@
     return { yellow, purple };
   }
 
-  selectInput.addEventListener("change", updateMessage);
-  document.addEventListener("DOMContentLoaded", updateMessage);
+  if (selectInput) {
+    selectInput.addEventListener("change", updateMessage);
+    document.addEventListener("DOMContentLoaded", updateMessage);
+  }
 </script>

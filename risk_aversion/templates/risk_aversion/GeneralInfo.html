@@ -1,28 +1,17 @@
-{% load static %}
-
-{% block styles %}
-<link rel="stylesheet" href="{% static 'style.css' %}">
-{% endblock %}
-
-{% block title %}
-
-	<h1 class="page-title">Informations générales</h1>
-
-{% endblock %}
-
-
+{% extends "global/Page.html" %}
+{% block title %}Informations générales{% endblock %}
 {% block content %}
 
 
-<div class="info-wrapper">
+<div class="experiment-card">
 
     <h3>Cette étape comprend :</h3>
     <ul class="steps-list">
         <li>
-            ✅ Une tâche rémunérée qui vous permettra de gagner 
+            <i class="fa-solid fa-check" class="icon--success"></i> Une tâche rémunérée qui vous permettra de gagner 
             <strong class="highlight">{{ C.ENDOWMENT | to0 }}</strong>
         </li>
-        <li>🎲 Une série de décisions mettant en jeu tout ou partie des {{ C.ENDOWMENT | to0 }} que vous aurez gagnés.</li>
+        <li><i class="fa-solid fa-dice" class="icon--ink"></i> Une série de décisions mettant en jeu tout ou partie des {{ C.ENDOWMENT | to0 }} que vous aurez gagnés.</li>
         <li>
             Pour le calcul de vos gains finaux, le taux de conversion sera le suivant : 1 jeton = {{ rate }} centimes d’euros. <br>
             Ainsi, {{ C.ENDOWMENT | to0 }} valent {{ exemple1_euros }} euros et {{ exemple2 | to0 }} valent {{ exemple2_euros }} euros. 
@@ -30,12 +19,13 @@
     </ul>
 
     <div class="alert-box">
-        <p>💡 À la fin de cette série de jeux, <strong>une seule de vos décisions</strong> est tirée au sort pour déterminer votre gain ou perte final.</p>
+        <p><i class="fa-solid fa-lightbulb" class="icon--rust"></i> À la fin de cette série de jeux, <strong>une seule de vos décisions</strong> est tirée au sort pour déterminer votre gain ou perte final.</p>
         
         <p><span class="alert-note">Cela signifie que chaque décision compte : il est donc important de répondre à chaque décision avec attention.</span></p>
     </div>
 
     <div class="button-container">
+        <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
         {{ next_button }}
     </div>
 </div>

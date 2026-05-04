@@ -1,17 +1,25 @@
 {% extends "global/Page.html" %}
-{{ block title }} Nouveau jeu - Instructions {{ endblock }}
+{% block title %}Instructions — Jeu de confiance{% endblock %}
 {% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Instructions</span>
+  <h1>Jeu de confiance</h1>
 
-<p>Ce jeu se joue à deux personnes : un joueur A et un joueur B.</p>
+  <p>Ce jeu se joue à deux personnes : un joueur A et un joueur B.</p>
 
-<ul>
-  <li>Le joueur A reçoit {{ C.ENDOWMENT }} jetons.</li>
-  <li>Il peut en envoyer une partie ou la totalité au joueur B.</li>
-  <li>Les jetons envoyés sont triplés lorsqu’ils arrivent chez le joueur B.</li>
-  <li>Le joueur B décide ensuite combien il souhaite renvoyer au joueur A.</li>
-  <li>Les jetons renvoyés par B ne sont pas multipliés</li>
-</ul>
+  <ul class="steps-list">
+    <li>Le joueur A reçoit <strong class="highlight">{{ C.ENDOWMENT }} jetons</strong>.</li>
+    <li>Il peut en envoyer une partie ou la totalité au joueur B.</li>
+    <li>Les jetons envoyés sont <strong>triplés</strong> lorsqu'ils arrivent chez le joueur B.</li>
+    <li>Le joueur B décide ensuite combien il souhaite renvoyer au joueur A.</li>
+    <li>Les jetons renvoyés par B ne sont pas multipliés.</li>
+  </ul>
 
-<p>Commençons par un petit exemple pour vérifier votre compréhension.</p>
+  <p>Commençons par un petit exemple pour vérifier votre compréhension.</p>
 
-{{ next_button }} {% endblock %}
+  <div class="button-container">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends "global/Page.html" %}
+{% block content %}
+<div class="experiment-card">
+  <span class="eyebrow">Partie 4 sur 7</span>
+  <h1>Préférences de répartition (SVO)</h1>
+  <p><em>Dans chacune des situations suivantes, vous devez choisir comment répartir des points entre VOUS et une AUTRE personne anonyme. Cochez simplement l'option qui vous convient le mieux. Il n'y a pas de bonne ou mauvaise réponse : nous cherchons à connaître vos préférences personnelles.<br>Note : vous interagissez avec une personne différente à chaque item.</em></p>
+
+  <div class="svo-table-container table-responsive mb-5">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th>
+          <th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Vous</th>
+          <td>85</td><td>85</td><td>85</td><td>85</td><td>85</td><td>85</td><td>85</td><td>85</td><td>85</td>
+        </tr>
+        <tr>
+          <th>Autre</th>
+          <td>85</td><td>76</td><td>68</td><td>59</td><td>50</td><td>41</td><td>33</td><td>24</td><td>15</td>
+        </tr>
+        <tr>
+          <th>Votre choix</th>
+          {% for choice in form.svo_item_1 %}
+          <td>{{ choice }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="svo-table-container table-responsive mb-5">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th>
+          <th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Vous</th>
+          <td>85</td><td>87</td><td>89</td><td>91</td><td>93</td><td>94</td><td>96</td><td>98</td><td>100</td>
+        </tr>
+        <tr>
+          <th>Autre</th>
+          <td>15</td><td>19</td><td>24</td><td>28</td><td>33</td><td>37</td><td>41</td><td>46</td><td>50</td>
+        </tr>
+        <tr>
+          <th>Votre choix</th>
+          {% for choice in form.svo_item_2 %}
+          <td>{{ choice }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="svo-table-container table-responsive mb-5">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th>
+          <th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Vous</th>
+          <td>50</td><td>54</td><td>59</td><td>63</td><td>68</td><td>72</td><td>76</td><td>81</td><td>85</td>
+        </tr>
+        <tr>
+          <th>Autre</th>
+          <td>100</td><td>98</td><td>96</td><td>94</td><td>93</td><td>91</td><td>89</td><td>87</td><td>85</td>
+        </tr>
+        <tr>
+          <th>Votre choix</th>
+          {% for choice in form.svo_item_3 %}
+          <td>{{ choice }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="svo-table-container table-responsive mb-5">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th>
+          <th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Vous</th>
+          <td>50</td><td>54</td><td>59</td><td>63</td><td>68</td><td>72</td><td>76</td><td>81</td><td>85</td>
+        </tr>
+        <tr>
+          <th>Autre</th>
+          <td>100</td><td>89</td><td>79</td><td>68</td><td>58</td><td>47</td><td>36</td><td>26</td><td>15</td>
+        </tr>
+        <tr>
+          <th>Votre choix</th>
+          {% for choice in form.svo_item_4 %}
+          <td>{{ choice }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="svo-table-container table-responsive mb-5">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th>
+          <th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Vous</th>
+          <td>100</td><td>98</td><td>96</td><td>94</td><td>93</td><td>91</td><td>89</td><td>87</td><td>85</td>
+        </tr>
+        <tr>
+          <th>Autre</th>
+          <td>50</td><td>54</td><td>59</td><td>63</td><td>68</td><td>72</td><td>76</td><td>81</td><td>85</td>
+        </tr>
+        <tr>
+          <th>Votre choix</th>
+          {% for choice in form.svo_item_5 %}
+          <td>{{ choice }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="svo-table-container table-responsive mb-5">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th>
+          <th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Vous</th>
+          <td>100</td><td>98</td><td>96</td><td>94</td><td>93</td><td>91</td><td>89</td><td>87</td><td>85</td>
+        </tr>
+        <tr>
+          <th>Autre</th>
+          <td>50</td><td>46</td><td>41</td><td>37</td><td>33</td><td>28</td><td>24</td><td>19</td><td>15</td>
+        </tr>
+        <tr>
+          <th>Votre choix</th>
+          {% for choice in form.svo_item_6 %}
+          <td>{{ choice }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="button-container mt-4">
+    <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
+    {{ next_button }}
+  </div>
+</div>
+
+<style>
+  .svo-table-container {
+    background: var(--bg-surface);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .table { margin-bottom: 0; }
+  .table th, .table td {
+    vertical-align: middle;
+  }
+  .table thead th {
+    background-color: rgba(3, 31, 55, 0.05);
+    font-family: var(--font-header);
+    color: var(--text-base);
+  }
+</style>
+{% endblock %}

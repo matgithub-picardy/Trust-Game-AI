@@ -1,17 +1,8 @@
-{% load static %}
-
-{% block styles %}
-<link rel="stylesheet" href="{% static 'style.css' %}">
-{% endblock %}
-
-{% block title %}
-
-  <h1 class="page-title"> Tâche rémunérée </h1>
-
-{% endblock %}
-
+{% extends "global/Page.html" %}
+{% block title %}Tâche rémunérée{% endblock %}
 {% block content %}
-<ul style="color:red">
+{# debug — distribution des chiffres de π, caché en prod #}
+<ul class="d-none">
     <li>0 : 19 </li>
     <li>1 : 20 </li>
     <li>2 : 24 </li>
@@ -23,7 +14,7 @@
     <li>8 : 25 </li>
     <li>9 : 23 </li>
 </ul>
-<div class="container">
+<div class="experiment-card">
     <div class="info-card">
         <div class="intro-section">
             <p class="intro-text">
@@ -49,8 +40,36 @@
     </div>
 
     <div class="button-container">
+        <button type="button" class="btn btn-back" onclick="window.history.back()">← Retour</button>
         {{ next_button }}
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  var STORAGE_KEY = 'ra_{{ participant.code }}_count_digit';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var input = document.querySelector('input[name="count_digit"]');
+    if (!input) return;
+
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved !== null && saved !== '') {
+      input.value = saved;
+    }
+
+    input.addEventListener('input', function() {
+      localStorage.setItem(STORAGE_KEY, this.value);
+    });
+
+    var form = document.querySelector('form');
+    if (form) form.addEventListener('submit', function() {
+      localStorage.setItem(STORAGE_KEY, input.value);
+    });
+  });
+})();
+</script>
 {% endblock %}
